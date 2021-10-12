@@ -18,11 +18,13 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
-    - name: Test
-      run: echo 'version ${{ github.event.release.tag_name }}'
     - name: Restore dependencies
       run:  dotnet restore
     - name: Build
       run: dotnet build -c release --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test -c release --no-build --verbosity normal
+    - name: Nuget pack
+      run: dotnet pack RemoteEntity/RemoteEntity.csproj -p:PackageVersion=${{ github.event.release.tag_name }} -p:PackageID=RemoteEntity -c Release
+    - name: Push nuget
+      run: dotnet nuget push -k ${{ secrets.NUGET_APIKEY }} "RemoteEntity/bin/Release/*.nupkg"
