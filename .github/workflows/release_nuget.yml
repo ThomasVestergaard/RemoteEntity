@@ -1,5 +1,4 @@
-name: .NET
-
+name: Publish nuget
 on:
   release:
     types:
