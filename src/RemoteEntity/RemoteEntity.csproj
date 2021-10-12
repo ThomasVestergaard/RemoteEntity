@@ -2,10 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <PackageId>TVestergaard.RemoteEntity</PackageId>
-    <Description></Description>
-    <Version>0.1.0-beta</Version>
-    <PackageProjectUrl>https://github.com/ThomasVestergaard/RemoteEntity</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>

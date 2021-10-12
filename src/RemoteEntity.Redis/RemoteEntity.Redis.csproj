@@ -2,10 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <PackageId>TVestergaard.RemoteEntity.Redis</PackageId>
-    <Description></Description>
-    <PackageProjectUrl>https://github.com/ThomasVestergaard/RemoteEntity</PackageProjectUrl>
-    <Version>0.1.0-beta</Version>
   </PropertyGroup>
 
   <ItemGroup>
