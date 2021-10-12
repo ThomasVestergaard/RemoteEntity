@@ -1,4 +1,4 @@
-name: Publish nuget
+name: Publish Core to nuget
 on:
   release:
     types:
