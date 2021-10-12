@@ -1,4 +1,4 @@
-name: Publish nuget
+name: Publish Redis to nuget
 on:
   release:
     types:
