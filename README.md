@@ -61,6 +61,13 @@ EntityHive is used in both the producer and the consumer.
         SomeValue = "Hello there!";
     }
 
+    // Publish
+    entityHive.PublishEntity(entity, "Some_id_for_this_entity");
+    
+    // Change something
+    entity.SomeValue = "It's me again!";
+    
+    // Publish it again
     entityHive.PublishEntity(entity, "Some_id_for_this_entity");
 ```
 
