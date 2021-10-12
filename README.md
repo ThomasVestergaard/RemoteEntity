@@ -1,11 +1,6 @@
 # What is this?
-<<<<<<< HEAD
 RemoteEntity is a small framework, that helps facilitate microservice communication.
 It is based upon a producer/consumer pattern where the producer is the one who 'owns' a specific entity and the consumers are observing this entity over the network and reacting on chages.
-=======
-RemoteEntity is a small framework which helps commication between microservices.
-It is based upon a producer/consumer pattern where the producer is the one who 'owns' a specific entity and the consumers are observing this entity over the network and reacting on changes.
->>>>>>> 4f2d645c4f45ca39e231f07ad4ff1795ac870d1a
 
 The idea is, that the consumer does not need the full change history to get up to the latest version of the entity. The latest version of the entity is always stored and changes can be applied as they come.
 
