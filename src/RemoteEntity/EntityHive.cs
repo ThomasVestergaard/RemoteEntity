@@ -23,6 +23,14 @@ namespace RemoteEntity
             channelReaderTasks = new List<Task>();
         }
 
+        public EntityHive(IEntityStorage entityStorage, ILogger logger)
+        {
+            this.entityStorage = entityStorage;
+            this.logger = logger;
+            observers = new List<IEntityObserver>();
+            channelReaderTasks = new List<Task>();
+        }
+
         private string getEntityStateKey(string entityId)
         {
             return $"state.{entityId}".ToLower();
@@ -35,21 +43,22 @@ namespace RemoteEntity
         
         public void PublishEntity<T>(T entity, string entityId) where T : ICloneable<T>
         {
+            var dto = new EntityDto<T>(entityId, entity, DateTimeOffset.UtcNow);
+
             // Store state
             var stateKey = getEntityStateKey(entityId);
             if (!entityStorage.ContainsKey(stateKey))
             {
-                entityStorage.Add(stateKey, entity);
+                entityStorage.Add(stateKey, dto);
             }
             else
             {
-                entityStorage.Set(stateKey, entity);
+                entityStorage.Set(stateKey, dto);
             }
 
             // Publish update
             if (entityPublisher != null)
             {
-                var dto = new EntityDto<T>(entityId, entity);
                 entityPublisher.Publish(getEntityStreamName(entityId), dto);
             }
         }
@@ -63,22 +72,23 @@ namespace RemoteEntity
             // Try to get entity data from redis
             if (entityStorage.ContainsKey(getEntityStateKey(entityId)))
             {
-                var currentEntity = entityStorage.Get<T>(getEntityStateKey(entityId));
-                toReturn.updateValue(currentEntity);
+                var currentEntity = entityStorage.Get<EntityDto<T>>(getEntityStateKey(entityId));
+                toReturn.updateValue(currentEntity.Value, currentEntity.PublishTime);
             }
 
-            // Channel for updates
-            var updateChannel = Channel.CreateUnbounded<EntityDto<T>>();
-            
-            // Subscribe to changes
-            entityPublisher.Subscribe<T>(getEntityStreamName(entityId), dto =>
+            if (entityPublisher != null)
             {
-                updateChannel.Writer.TryWrite(dto);
-            });
+                // Channel for updates
+                var updateChannel = Channel.CreateUnbounded<EntityDto<T>>();
 
-            var channelReaderTask = toReturn.Start(updateChannel, updateHandler);
-            observers.Add(toReturn);
-            channelReaderTasks.Add(channelReaderTask);
+                // Subscribe to changes
+                entityPublisher.Subscribe<T>(getEntityStreamName(entityId), dto => { updateChannel.Writer.TryWrite(dto); });
+
+                var channelReaderTask = toReturn.Start(updateChannel, updateHandler);
+                observers.Add(toReturn);
+                channelReaderTasks.Add(channelReaderTask);
+            }
+
             return toReturn;
         }
 
