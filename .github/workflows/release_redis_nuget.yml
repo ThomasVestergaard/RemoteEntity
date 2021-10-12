@@ -25,6 +25,6 @@ jobs:
     - name: Test
       run: dotnet test -c release --no-build --verbosity normal
     - name: Nuget pack
-      run: dotnet pack RemoteEntity.Redis/RemoteEntity.Redis.csproj -p:PackageVersion=${{ github.event.release.tag_name }} -p:PackageID=RemoteEntity.Redis -c Release
+      run: dotnet pack RemoteEntity.Redis/RemoteEntity.Redis.csproj --no-restore -p:PackageVersion=${{ github.event.release.tag_name }} -p:PackageID=RemoteEntity.Redis -c Release
     - name: Push nuget
       run: dotnet nuget push -k ${{ secrets.NUGET_APIKEY }} "RemoteEntity.Redis/bin/Release/*.nupkg" --source nuget.org
