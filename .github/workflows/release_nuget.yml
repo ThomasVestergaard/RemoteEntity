@@ -24,7 +24,9 @@ jobs:
       run: dotnet build -c release --no-restore
     - name: Test
       run: dotnet test -c release --no-build --verbosity normal
+    - name: Nuget add source
+      run: dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org
     - name: Nuget pack
       run: dotnet pack RemoteEntity/RemoteEntity.csproj -p:PackageVersion=${{ github.event.release.tag_name }} -p:PackageID=RemoteEntity -c Release
     - name: Push nuget
-      run: dotnet nuget push -k ${{ secrets.NUGET_APIKEY }} "RemoteEntity/bin/Release/*.nupkg"
+      run: dotnet nuget push -k ${{ secrets.NUGET_APIKEY }} "RemoteEntity/bin/Release/*.nupkg" --source nuget.org
