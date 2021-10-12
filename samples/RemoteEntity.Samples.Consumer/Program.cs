@@ -29,7 +29,7 @@ namespace RemoteEntity.Samples.Consumer
                 // Check the latest value whenever you want
                 if (observable.Value != null) // Remember to check for null. The object might not exist.
                 {
-                    Console.WriteLine($"Current value is : {observable.Value.SomeText}");
+                    Console.WriteLine($"Entity publish time was: {observable.PublishTime.ToString("yyyy-MM-dd hh:mm:ss")}. Current value is : {observable.Value.SomeText}");
                 }
 
                 Thread.Sleep(500);
