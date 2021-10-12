@@ -73,7 +73,7 @@ EntityHive is used in both the producer and the consumer.
 
 ## Setup consumer
 ```csharp
-    var observableEntity = hive.SubscribeToEntity<SomeValueObject>("Some_id_for_this_entity", entity =>
+    var observableEntity = entityHive.SubscribeToEntity<SomeValueObject>("Some_id_for_this_entity", entity =>
     {
         // Handle real-time updates here. A thread-safe copy of the updated entity is parsed to this handler
         System.Console.WriteLine($"Update received. New value: {entity.SomeValue}");
@@ -83,13 +83,19 @@ EntityHive is used in both the producer and the consumer.
     System.Console.WriteLine($"Current value: {observableEntity.Value.SomeValue}");
 ```
 
-# Samples
-A few usage examples are available in this repo.
-## Sample case 1
-Producer keeps producing when consumers are down. When consumers comes up, they see the latest version of the entity.
+## Stop everything
+RemoteEntity is utilizing C# Channels and probably some active network connections (depending on which pub/sub method you are using) which needs a graceful shutdown.
 
-## Sample case 2
-Producer stop producing. Consumers are still able to get the latest version of the entity. When producer comes back up, consumers resume getting updates.
+When stopping your application, make sure to call Stop() on the EntityHive instance.
+
+```csharp
+    await entityHive.Stop();
+```
+
+# Samples
+A simple producer and consumer sample application is included in this repo. I recommend you play around with them to get familiar with the framework behaviour.
+
+Samles needs access to a Redis instance.
 
 
 # Storage and message queue support
