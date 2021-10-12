@@ -10,6 +10,7 @@ namespace RemoteEntity
         private readonly ILogger logger;
         private object lockObject = new object();
         public string EntityId { get; }
+        
         private Action<T> updateObserver { get; set; }
         private Channel<EntityDto<T>> messageChannel { get; set; }
         public T Value
@@ -18,25 +19,42 @@ namespace RemoteEntity
             {
                 lock (lockObject)
                 {
+                    if (value == null)
+                        return default;
+
                     return value.Clone();
                 }
             }
         }
         
         private T value { get; set; }
-        
+
+        public DateTimeOffset PublishTime
+        {
+            get
+            {
+                lock (lockObject)
+                {
+                    return new DateTimeOffset(publishTime.DateTime, TimeSpan.Zero);
+                }
+            }
+        }
+        private DateTimeOffset publishTime { get; set; }
+
         internal EntityObserver(string entityId, ILogger logger)
         {
             this.logger = logger;
             EntityId = entityId;
+            publishTime = DateTimeOffset.MinValue;
         }
 
-        internal void updateValue(T newValue)
+        internal void updateValue(T newValue, DateTimeOffset publishTime)
         {
             logger.LogTrace($"Update received for '{EntityId}'");
             lock (lockObject)
             {
                 value = newValue;
+                this.publishTime = publishTime;
             }
         }
 
@@ -55,10 +73,10 @@ namespace RemoteEntity
 
                     if (message.Value != null)
                     {
-                        updateValue(message.Value);
+                        updateValue(message.Value, message.PublishTime);
                     } else
                     {
-                        updateValue(default);
+                        updateValue(default, DateTimeOffset.MinValue);
                     }
 
                     if (this.updateObserver != null)
