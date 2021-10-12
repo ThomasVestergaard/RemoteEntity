@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <PackageId>TVestergaard.RemoteEntity.Redis</PackageId>
+    <Description>RemoteEntity is a small framework, that helps facilitate microservice communication. It is based upon a producer/consumer pattern where the producer is the one who 'owns' a specific entity and the consumers are observing this entity over the network and reacting on chages.</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageId>TVestergaard.RemoteEntity.Redis</PackageId>
-    <Description>RemoteEntity is a small framework, that helps facilitate microservice communication. It is based upon a producer/consumer pattern where the producer is the one who 'owns' a specific entity and the consumers are observing this entity over the network and reacting on chages.</Description>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="ServiceStack.Redis" Version="5.12.0" />
