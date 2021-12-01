@@ -6,12 +6,19 @@ namespace RemoteEntity.Redis
 {
     public class RedisEntityStorage : IEntityStorage
     {
-        private readonly RedisClient redisClient;
+        private IRedisClient redisClient
+        {
+            get
+            {
+                return redisClientManager.GetClient();
+            }
+        }
+        private readonly IRedisClientsManager redisClientManager;
         private readonly ILogger logger;
 
-        public RedisEntityStorage(RedisClient redisClient, ILogger logger)
+        public RedisEntityStorage(IRedisClientsManager redisClientManager, ILogger logger)
         {
-            this.redisClient = redisClient;
+            this.redisClientManager = redisClientManager;
             this.logger = logger;
         }
         public bool ContainsKey(string key)

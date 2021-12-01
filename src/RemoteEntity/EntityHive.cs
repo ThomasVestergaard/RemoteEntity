@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace RemoteEntity
 {
-    public class EntityHive
+    public class EntityHive : IEntityHive
     {
         private readonly IEntityStorage entityStorage;
         private readonly IEntityPubSub entityPublisher;

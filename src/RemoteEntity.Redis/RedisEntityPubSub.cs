@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -11,19 +9,27 @@ namespace RemoteEntity.Redis
 {
     public class RedisEntityPubSub : IEntityPubSub
     {
-        private readonly RedisClient redisClient;
+        private IRedisClient redisClient
+        {
+            get
+            {
+                return redisClientManager.GetClient();
+            }
+        }
+
+        private readonly IRedisClientsManager redisClientManager;
         private readonly ILogger logger;
 
-        public RedisEntityPubSub(RedisClient redisClient, ILogger logger)
+        public RedisEntityPubSub(IRedisClientsManager redisClientManager, ILogger logger)
         {
-            this.redisClient = redisClient;
+            this.redisClientManager = redisClientManager;
             this.logger = logger;
         }
 
         public void Publish<T>(string channel, EntityDto<T> dto)
         {
             var serialized = JsonConvert.SerializeObject(dto);
-            redisClient.Publish(channel, Encoding.UTF8.GetBytes(serialized));
+            ((RedisClient)redisClient).Publish(channel, Encoding.UTF8.GetBytes(serialized));
         }
 
         public Task Subscribe<T>(string channel, Action<EntityDto<T>> handler)
@@ -60,7 +66,7 @@ namespace RemoteEntity.Redis
         {
             Task.Run(async () =>
             {
-                redisClient.UnSubscribe(channel);
+                ((RedisClient)redisClient).UnSubscribe(channel);
             });
 
         }
