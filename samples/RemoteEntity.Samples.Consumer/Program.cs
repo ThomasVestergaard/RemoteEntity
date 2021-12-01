@@ -10,9 +10,9 @@ namespace RemoteEntity.Samples.Consumer
     {
         static void Main(string[] args)
         {
-            var redisClient = new RedisClient("redis://localhost:6379");
-            var redisEntityStorage = new RedisEntityStorage(redisClient, NullLogger.Instance);
-            var redisEntityPubSub = new RedisEntityPubSub(redisClient, NullLogger.Instance);
+            var redisClientManager = new PooledRedisClientManager("redis://localhost:6379");
+            var redisEntityStorage = new RedisEntityStorage(redisClientManager, NullLogger.Instance);
+            var redisEntityPubSub = new RedisEntityPubSub(redisClientManager, NullLogger.Instance);
             var entityHive = new EntityHive(redisEntityStorage, redisEntityPubSub, NullLogger.Instance);
 
 
