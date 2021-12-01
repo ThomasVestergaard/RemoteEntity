@@ -52,9 +52,9 @@ The assembly this class lives in should be referenced on both the producer and c
 ## Initiate hive
 EntityHive is used in both the producer and the consumer.
 ```csharp
-    var redisClient = new RedisClient("redis://localhost:6379");
-    var redisEntityStorage = new RedisEntityStorage(redisClient, NullLogger.Instance);
-    var redisEntityPubSub = new RedisEntityPubSub(redisClient, NullLogger.Instance);
+    var redisClientsManager = new PooledRedisClientManager("redis://localhost:6379");
+    var redisEntityStorage = new RedisEntityStorage(redisClientsManager, NullLogger.Instance);
+    var redisEntityPubSub = new RedisEntityPubSub(redisClientsManager, NullLogger.Instance);
     var entityHive = new EntityHive(redisEntityStorage, redisEntityPubSub, NullLogger.Instance);
 ```
 
