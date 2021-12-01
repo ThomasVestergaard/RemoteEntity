@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TVestergaard.RemoteEntity.Redis" Version="0.1.3-beta" />
+    <PackageReference Include="TVestergaard.RemoteEntity.Redis" Version="0.1.4-beta" />
   </ItemGroup>
 
 </Project>
