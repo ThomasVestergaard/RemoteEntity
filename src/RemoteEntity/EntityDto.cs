@@ -2,7 +2,7 @@
 
 namespace RemoteEntity
 {
-    public class EntityDto<T>
+    public class EntityDto<T> : IEntityDto<T>
     {
         public DateTimeOffset PublishTime { get; set; }
         public string EntityId { get; set; }
