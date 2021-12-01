@@ -19,20 +19,34 @@ namespace RemoteEntity.Redis
 
         private readonly IRedisClientsManager redisClientManager;
         private readonly ILogger logger;
+        private string streamPrefix { get; set; }
 
         public RedisEntityPubSub(IRedisClientsManager redisClientManager, ILogger logger)
         {
             this.redisClientManager = redisClientManager;
             this.logger = logger;
+            streamPrefix = "entitystream.";
         }
 
-        public void Publish<T>(string channel, EntityDto<T> dto)
+        public RedisEntityPubSub(IRedisClientsManager redisClientManager, ILogger logger, string streamPrefix)
+        {
+            this.redisClientManager = redisClientManager;
+            this.logger = logger;
+            this.streamPrefix = streamPrefix;
+        }
+
+        private string getStreamName(string entityId)
+        {
+            return $"{streamPrefix}{entityId}".ToLower();
+        }
+
+        public void Publish<T>(string entityId, EntityDto<T> dto)
         {
             var serialized = JsonConvert.SerializeObject(dto);
-            ((RedisClient)redisClient).Publish(channel, Encoding.UTF8.GetBytes(serialized));
+            ((RedisClient)redisClient).Publish(getStreamName(entityId), Encoding.UTF8.GetBytes(serialized));
         }
 
-        public Task Subscribe<T>(string channel, Action<EntityDto<T>> handler)
+        public Task Subscribe<T>(string entityId, Action<EntityDto<T>> handler)
         {
             return Task.Run(async () =>
             {
@@ -48,7 +62,7 @@ namespace RemoteEntity.Redis
                     }
                     catch (Exception ex)
                     {
-                        logger.LogError(ex, $"Error while deserializing EntityDto of type '{typeof(T).ToString()}' on channel '{channel}'");
+                        logger.LogError(ex, $"Error while deserializing EntityDto of type '{typeof(T).ToString()}' on channel '{getStreamName(entityId)}'");
                     }
 
                     if (handler != null && deserializedEntity != null)
@@ -57,16 +71,16 @@ namespace RemoteEntity.Redis
                     }
 
                 };
-                subscription.SubscribeToChannels(channel);
+                subscription.SubscribeToChannels(getStreamName(entityId));
 
             });
         }
 
-        public void Unsubscribe(string channel)
+        public void Unsubscribe(string entityId)
         {
             Task.Run(async () =>
             {
-                ((RedisClient)redisClient).UnSubscribe(channel);
+                ((RedisClient)redisClient).UnSubscribe(getStreamName(entityId));
             });
 
         }
