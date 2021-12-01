@@ -21,7 +21,7 @@ namespace RemoteEntity.Redis
         {
             this.redisClientManager = redisClientManager;
             this.logger = logger;
-            keyPrefix = "state.";
+            keyPrefix = "entitystate.";
         }
 
         public RedisEntityStorage(IRedisClientsManager redisClientManager, ILogger logger, string keyPrefix)
@@ -38,7 +38,7 @@ namespace RemoteEntity.Redis
 
         public bool ContainsKey(string key)
         {
-            return redisClient.ContainsKey(key);
+            return redisClient.ContainsKey(getKeyName(key));
         }
 
         public bool Add<T>(string key, T entity)
