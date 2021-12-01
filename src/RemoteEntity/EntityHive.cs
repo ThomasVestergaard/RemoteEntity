@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace RemoteEntity
 {
-    public class EntityHive
+    public class EntityHive : IEntityHive
     {
         private readonly IEntityStorage entityStorage;
         private readonly IEntityPubSub entityPublisher;
@@ -30,36 +30,25 @@ namespace RemoteEntity
             observers = new List<IEntityObserver>();
             channelReaderTasks = new List<Task>();
         }
-
-        private string getEntityStateKey(string entityId)
-        {
-            return $"state.{entityId}".ToLower();
-        }
-
-        private string getEntityStreamName(string entityId)
-        {
-            return $"stream.{entityId}".ToLower();
-        }
         
         public void PublishEntity<T>(T entity, string entityId) where T : ICloneable<T>
         {
             var dto = new EntityDto<T>(entityId, entity, DateTimeOffset.UtcNow);
 
             // Store state
-            var stateKey = getEntityStateKey(entityId);
-            if (!entityStorage.ContainsKey(stateKey))
+            if (!entityStorage.ContainsKey(entityId))
             {
-                entityStorage.Add(stateKey, dto);
+                entityStorage.Add(entityId, dto);
             }
             else
             {
-                entityStorage.Set(stateKey, dto);
+                entityStorage.Set(entityId, dto);
             }
 
             // Publish update
             if (entityPublisher != null)
             {
-                entityPublisher.Publish(getEntityStreamName(entityId), dto);
+                entityPublisher.Publish(entityId, dto);
             }
         }
 
@@ -70,9 +59,9 @@ namespace RemoteEntity
             var toReturn = new EntityObserver<T>(entityId, logger);
 
             // Try to get entity data from redis
-            if (entityStorage.ContainsKey(getEntityStateKey(entityId)))
+            if (entityStorage.ContainsKey(entityId))
             {
-                var currentEntity = entityStorage.Get<EntityDto<T>>(getEntityStateKey(entityId));
+                var currentEntity = entityStorage.Get<EntityDto<T>>(entityId);
                 toReturn.updateValue(currentEntity.Value, currentEntity.PublishTime);
             }
 
@@ -82,7 +71,7 @@ namespace RemoteEntity
                 var updateChannel = Channel.CreateUnbounded<EntityDto<T>>();
 
                 // Subscribe to changes
-                entityPublisher.Subscribe<T>(getEntityStreamName(entityId), dto => { updateChannel.Writer.TryWrite(dto); });
+                entityPublisher.Subscribe<T>(entityId, dto => { updateChannel.Writer.TryWrite(dto); });
 
                 var channelReaderTask = toReturn.Start(updateChannel, updateHandler);
                 observers.Add(toReturn);
@@ -99,7 +88,7 @@ namespace RemoteEntity
             {
                 foreach (var entityObserver in observers)
                 {
-                    entityPublisher.Unsubscribe(getEntityStreamName(entityObserver.EntityId));
+                    entityPublisher.Unsubscribe(entityObserver.EntityId);
                     entityObserver.Stop();
                 }
 
