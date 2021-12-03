@@ -7,6 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RemoteEntity", "RemoteEntit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RemoteEntity.Redis", "RemoteEntity.Redis\RemoteEntity.Redis.csproj", "{830D2E79-DF4E-4544-9221-ED0F66DC48EE}"
 EndProject
+
+awjdqjwjdwq
+
+
+
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteEntity.Tests", "RemoteEntity.Tests\RemoteEntity.Tests.csproj", "{4F2F356D-EC37-48D3-AED5-5DD04A6F2FBB}"
 EndProject
 Global
