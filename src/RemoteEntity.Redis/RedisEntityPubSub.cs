@@ -1,38 +1,31 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using BeetleX.Redis;
 using Newtonsoft.Json;
-using ServiceStack.Redis;
 
 namespace RemoteEntity.Redis
 {
     public class RedisEntityPubSub : IEntityPubSub
     {
-        private IRedisClient redisClient
-        {
-            get
-            {
-                return redisClientManager.GetClient();
-            }
-        }
+        private readonly RedisDB redisDb;
+        private readonly string streamPrefix;
 
-        private readonly IRedisClientsManager redisClientManager;
-        private readonly ILogger logger;
-        private string streamPrefix { get; set; }
+        private Dictionary<string, Subscriber> subscribers { get; set; }
 
-        public RedisEntityPubSub(IRedisClientsManager redisClientManager, ILogger logger)
+        public RedisEntityPubSub(RedisDB redisDb)
         {
-            this.redisClientManager = redisClientManager;
-            this.logger = logger;
+            this.redisDb = redisDb;
             streamPrefix = "entitystream.";
+            subscribers = new Dictionary<string, Subscriber>();
         }
 
-        public RedisEntityPubSub(IRedisClientsManager redisClientManager, ILogger logger, string streamPrefix)
+        public RedisEntityPubSub(RedisDB redisDb, string streamPrefix)
         {
-            this.redisClientManager = redisClientManager;
-            this.logger = logger;
+            this.redisDb = redisDb;
             this.streamPrefix = streamPrefix;
+            subscribers = new Dictionary<string, Subscriber>();
         }
 
         private string getStreamName(string entityId)
@@ -40,50 +33,41 @@ namespace RemoteEntity.Redis
             return $"{streamPrefix}{entityId}".ToLower();
         }
 
-        public void Publish<T>(string entityId, EntityDto<T> dto)
+        public void Publish<T>(string entityId, EntityDto<T> entity)
         {
-            var serialized = JsonConvert.SerializeObject(dto);
-            ((RedisClient)redisClient).Publish(getStreamName(entityId), Encoding.UTF8.GetBytes(serialized));
+            var serialized = JsonConvert.SerializeObject(entity);
+            redisDb.Publish(getStreamName(entityId), Encoding.UTF8.GetBytes(serialized)).GetAwaiter().GetResult();
         }
-
-        public Task Subscribe<T>(string entityId, Action<EntityDto<T>> handler)
+        
+        public void Subscribe<T>(string entityId, Action<EntityDto<T>> handler)
         {
-            return Task.Run(async () =>
+            if (subscribers.ContainsKey(getStreamName(entityId)))
+                return;
+
+            var subscriber = redisDb.Subscribe();
+            subscriber.Register<byte[]>(getStreamName(entityId), dtoBytes =>
             {
-                var subscription = redisClient.CreateSubscription();
+                var serializedContent = Encoding.UTF8.GetString(dtoBytes);
+                var deserializedEntity = JsonConvert.DeserializeObject<EntityDto<T>>(serializedContent);
 
-                subscription.OnMessageBytes = (s, bytes) =>
+                if (handler != null && deserializedEntity != null)
                 {
-                    EntityDto<T> deserializedEntity = null;
-                    try
-                    {
-                        var serializedContent = Encoding.UTF8.GetString(bytes);
-                        deserializedEntity = JsonConvert.DeserializeObject<EntityDto<T>>(serializedContent);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(ex, $"Error while deserializing EntityDto of type '{typeof(T).ToString()}' on channel '{getStreamName(entityId)}'");
-                    }
-
-                    if (handler != null && deserializedEntity != null)
-                    {
-                        handler(deserializedEntity);
-                    }
-
-                };
-                subscription.SubscribeToChannels(getStreamName(entityId));
-
+                    handler(deserializedEntity);
+                }
             });
+
+            subscriber.Listen();
+            subscribers.Add(getStreamName(entityId), subscriber);
         }
 
         public void Unsubscribe(string entityId)
         {
-            Task.Run(async () =>
+            if (subscribers.ContainsKey(getStreamName(entityId)))
             {
-                ((RedisClient)redisClient).UnSubscribe(getStreamName(entityId));
-            });
-
+                subscribers[getStreamName(entityId)].UnRegister(getStreamName(entityId));
+                subscribers.Remove(getStreamName(entityId));
+            }
+            
         }
-
     }
 }
