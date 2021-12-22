@@ -1,33 +1,21 @@
-﻿using Newtonsoft.Json;
-using Microsoft.Extensions.Logging;
-using ServiceStack.Redis;
+﻿using BeetleX.Redis;
+using Newtonsoft.Json;
 
 namespace RemoteEntity.Redis
 {
     public class RedisEntityStorage : IEntityStorage
     {
-        private IRedisClient redisClient
-        {
-            get
-            {
-                return redisClientManager.GetClient();
-            }
-        }
-        private readonly IRedisClientsManager redisClientManager;
-        private readonly ILogger logger;
-        private string keyPrefix { get; set; }
+        private readonly RedisDB redisDb;
+        private readonly string keyPrefix;
 
-        public RedisEntityStorage(IRedisClientsManager redisClientManager, ILogger logger)
+        public RedisEntityStorage(RedisDB redisDb)
         {
-            this.redisClientManager = redisClientManager;
-            this.logger = logger;
+            this.redisDb = redisDb;
             keyPrefix = "entitystate.";
         }
-
-        public RedisEntityStorage(IRedisClientsManager redisClientManager, ILogger logger, string keyPrefix)
+        public RedisEntityStorage(RedisDB redisDb, string keyPrefix)
         {
-            this.redisClientManager = redisClientManager;
-            this.logger = logger;
+            this.redisDb = redisDb;
             this.keyPrefix = keyPrefix;
         }
 
@@ -38,27 +26,30 @@ namespace RemoteEntity.Redis
 
         public bool ContainsKey(string key)
         {
-            return redisClient.ContainsKey(getKeyName(key));
+            if (redisDb.Exists(getKeyName(key)).GetAwaiter().GetResult() == 1)
+                return true;
+
+            return false;
         }
 
         public bool Add<T>(string key, T entity)
         {
             var serialized = JsonConvert.SerializeObject(entity);
-            return redisClient.Add(getKeyName(key), serialized);
+            redisDb.Set(getKeyName(key), serialized).GetAwaiter().GetResult();
+            return true;
         }
 
         public bool Set<T>(string key, T entity)
         {
             var serialized = JsonConvert.SerializeObject(entity);
-            return redisClient.Set(getKeyName(key), serialized);
+            redisDb.Set(getKeyName(key), serialized).GetAwaiter().GetResult();
+            return true;
         }
 
         public T Get<T>(string key)
         {
-            var serialized = redisClient.Get<string>(getKeyName(key));
+            var serialized = redisDb.Get<string>(getKeyName(key)).GetAwaiter().GetResult();
             return JsonConvert.DeserializeObject<T>(serialized);
         }
-
-
     }
 }
