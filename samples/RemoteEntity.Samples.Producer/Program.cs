@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
+using BeetleX.Redis;
 using Microsoft.Extensions.Logging.Abstractions;
 using RemoteEntity.Redis;
-using ServiceStack.Redis;
 
 namespace RemoteEntity.Samples.Producer
 {
@@ -10,9 +10,12 @@ namespace RemoteEntity.Samples.Producer
     {
         static void Main(string[] args)
         {
-            var redisClientManager = new PooledRedisClientManager("redis://localhost:6379");
-            var redisEntityStorage = new RedisEntityStorage(redisClientManager, NullLogger.Instance);
-            var redisEntityPubSub = new RedisEntityPubSub(redisClientManager, NullLogger.Instance);
+            var redisDb = new RedisDB();
+            redisDb.DataFormater = new JsonFormater();
+            redisDb.Host.AddWriteHost("localhost");
+
+            var redisEntityStorage = new RedisEntityStorage(redisDb);
+            var redisEntityPubSub = new RedisEntityPubSub(redisDb);
             var entityHive = new EntityHive(redisEntityStorage, redisEntityPubSub, NullLogger.Instance);
 
             var obj = new SomeValueObject

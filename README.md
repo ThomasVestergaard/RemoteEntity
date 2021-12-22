@@ -31,7 +31,7 @@ To get started, you need access to a Redis instance. Run one locally in docker u
 
 Install the nuget packages.
 ```csharp
-Install-Package TVestergaard.RemoteEntity.Redis -Version 0.1.4-beta
+Install-Package TVestergaard.RemoteEntity.Redis -Version 0.1.5-beta
 ```
 
 ## Define a class that should be shared across services
@@ -52,9 +52,9 @@ The assembly this class lives in should be referenced on both the producer and c
 ## Initiate hive
 EntityHive is used in both the producer and the consumer.
 ```csharp
-    var redisClientsManager = new PooledRedisClientManager("redis://localhost:6379");
-    var redisEntityStorage = new RedisEntityStorage(redisClientsManager, NullLogger.Instance);
-    var redisEntityPubSub = new RedisEntityPubSub(redisClientsManager, NullLogger.Instance);
+    var redisDb = new RedisDB();
+    redisDb.DataFormater = new JsonFormater();
+    redisDb.Host.AddWriteHost("localhost");
     var entityHive = new EntityHive(redisEntityStorage, redisEntityPubSub, NullLogger.Instance);
 ```
 
