@@ -53,6 +53,8 @@ The assembly this class lives in should be referenced on both the producer and c
 EntityHive is used in both the producer and the consumer.
 ```csharp
     var redisDb = new RedisDB();
+    var redisEntityStorage = new RedisEntityStorage(redisDb);
+    var redisEntityPubSub = new RedisEntityPubSub(redisDb);    
     redisDb.DataFormater = new JsonFormater();
     redisDb.Host.AddWriteHost("localhost");
     var entityHive = new EntityHive(redisEntityStorage, redisEntityPubSub, NullLogger.Instance);
