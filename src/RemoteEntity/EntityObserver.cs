@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace RemoteEntity
 {
-    public class EntityObserver<T> : IEntityObserver where T : ICloneable<T>
+    public class EntityObserver<T> : IManagedObserver, IEntityObserver<T> where T : ICloneable<T>
     {
         public delegate void EntityUpdateHandler(T newValue);
         public event  EntityUpdateHandler OnUpdate;

@@ -11,7 +11,7 @@ namespace RemoteEntity
         private readonly IEntityStorage entityStorage;
         private readonly IEntityPubSub entityPublisher;
         private readonly ILogger logger;
-        private List<IEntityObserver> observers { get; set; }
+        private List<IManagedObserver> observers { get; set; }
         private List<Task> channelReaderTasks { get; set; }
 
         public EntityHive(IEntityStorage entityStorage, IEntityPubSub entityPublisher, ILogger logger)
@@ -19,7 +19,7 @@ namespace RemoteEntity
             this.entityStorage = entityStorage;
             this.entityPublisher = entityPublisher;
             this.logger = logger;
-            observers = new List<IEntityObserver>();
+            observers = new List<IManagedObserver>();
             channelReaderTasks = new List<Task>();
         }
 
@@ -27,7 +27,7 @@ namespace RemoteEntity
         {
             this.entityStorage = entityStorage;
             this.logger = logger;
-            observers = new List<IEntityObserver>();
+            observers = new List<IManagedObserver>();
             channelReaderTasks = new List<Task>();
         }
         
@@ -52,12 +52,12 @@ namespace RemoteEntity
             }
         }
 
-        public EntityObserver<T> SubscribeToEntity<T>(string entityId) where T : ICloneable<T>
+        public IEntityObserver<T> SubscribeToEntity<T>(string entityId) where T : ICloneable<T>
         {
             return SubscribeToEntity<T>(entityId, null);
         }
 
-        public EntityObserver<T> SubscribeToEntity<T>(string entityId, Action<T> updateHandler) where T : ICloneable<T>
+        public IEntityObserver<T> SubscribeToEntity<T>(string entityId, Action<T> updateHandler) where T : ICloneable<T>
         {
             logger.LogInformation($"Subscribing to '{entityId}'");
             var toReturn = new EntityObserver<T>(entityId, logger);

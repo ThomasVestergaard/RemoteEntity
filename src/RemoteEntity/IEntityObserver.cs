@@ -1,9 +1,12 @@
-﻿namespace RemoteEntity
+using System;
+
+namespace RemoteEntity;
+
+public interface IEntityObserver<T> where T : ICloneable<T>
 {
-    public interface IEntityObserver
-    {
-        string EntityId { get; }
-        
-        void Stop();
-    }
+    event  EntityObserver<T>.EntityUpdateHandler OnUpdate;
+    string EntityId { get; }
+    T Value { get; }
+    DateTimeOffset PublishTime { get; }
+    void Stop();
 }
