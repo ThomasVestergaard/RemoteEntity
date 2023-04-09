@@ -7,6 +7,8 @@ namespace RemoteEntity
 {
     public class EntityObserver<T> : IEntityObserver where T : ICloneable<T>
     {
+        public delegate void EntityUpdateHandler(T newValue);
+        public event  EntityUpdateHandler OnUpdate;
         private readonly ILogger logger;
         private object lockObject = new object();
         public string EntityId { get; }
@@ -41,6 +43,11 @@ namespace RemoteEntity
         }
         private DateTimeOffset publishTime { get; set; }
 
+        protected virtual void RaiseOnUpdateEvent(T newValue)
+        {
+            OnUpdate?.Invoke(newValue);
+        }
+
         internal EntityObserver(string entityId, ILogger logger)
         {
             this.logger = logger;
@@ -56,8 +63,14 @@ namespace RemoteEntity
                 value = newValue;
                 this.publishTime = publishTime;
             }
+            RaiseOnUpdateEvent(value);
         }
 
+        internal Task Start(Channel<EntityDto<T>> messageChannel)
+        {
+            return Start(messageChannel, null);
+        }
+        
         internal Task Start(Channel<EntityDto<T>> messageChannel, Action<T> updateObserver)
         {
             logger.LogTrace($"Starting observer for '{EntityId}'");
