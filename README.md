@@ -31,7 +31,7 @@ To get started, you need access to a Redis instance. Run one locally in docker u
 
 Install the nuget packages.
 ```csharp
-Install-Package TVestergaard.RemoteEntity.Redis -Version 0.1.6-beta
+Install-Package TVestergaard.RemoteEntity.Redis -Version 0.1.7-beta
 ```
 
 ## Define a class that should be shared across services
@@ -48,6 +48,15 @@ The assembly this class lives in should be referenced on both the producer and c
         }
     }
 ```
+
+If you are in a hurry and don't want to implement the Clone() method, you can make use of DeepCloner that does it for you. Works great with simple DTO's but may not be suited with more complex object. Use with caution.
+
+```csharp
+    public class MyClass : DeepCloner<MyClass> {
+        public string SomeValue { get; set; }        
+    }
+```
+
 
 ## Initiate hive
 EntityHive is used in both the producer and the consumer.
