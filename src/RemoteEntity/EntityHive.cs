@@ -52,6 +52,10 @@ namespace RemoteEntity
             }
         }
 
+        public EntityObserver<T> SubscribeToEntity<T>(string entityId) where T : ICloneable<T>
+        {
+            return SubscribeToEntity<T>(entityId, null);
+        }
 
         public EntityObserver<T> SubscribeToEntity<T>(string entityId, Action<T> updateHandler) where T : ICloneable<T>
         {
