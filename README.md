@@ -31,7 +31,7 @@ To get started, you need access to a Redis instance. Run one locally in docker u
 
 Install the nuget packages.
 ```csharp
-Install-Package TVestergaard.RemoteEntity.Redis -Version 0.1.5-beta
+Install-Package TVestergaard.RemoteEntity.Redis -Version 0.1.6-beta
 ```
 
 ## Define a class that should be shared across services
@@ -86,6 +86,12 @@ EntityHive is used in both the producer and the consumer.
 
     // You can also access the latest version through the Observable object. This is thread safe.
     System.Console.WriteLine($"Current value: {observableEntity.Value.SomeValue}");
+    
+    // It is also possible to subscribe to updates directly on the entity observer.
+    // This is useful if you register the subscribed entities in a dependency injection container.
+    observableEntity.OnUpdate += updatedEntity => {
+        System.Console.WriteLine($"Update received on entity event handler. New value: {updatedEntity.SomeValue}");
+    };
 ```
 
 ## Stop everything
