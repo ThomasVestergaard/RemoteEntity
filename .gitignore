@@ -33,6 +33,8 @@ bld/
 *.VisualState.xml
 TestResult.xml
 
+# Rider stuff
+*/.idea/**
 
 # ReSharper is a .NET coding add-in
 _ReSharper*/
