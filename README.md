@@ -86,6 +86,12 @@ EntityHive is used in both the producer and the consumer.
 
     // You can also access the latest version through the Observable object. This is thread safe.
     System.Console.WriteLine($"Current value: {observableEntity.Value.SomeValue}");
+    
+    // It is also possible to subscribe to updates directly on the entity observer.
+    // This is useful if you register the subscribed entities in a dependency injection container.
+    observableEntity.OnUpdate += updatedEntity => {
+        System.Console.WriteLine($"Update received on entity event handler. New value: {updatedEntity.SomeValue}");
+    };
 ```
 
 ## Stop everything
