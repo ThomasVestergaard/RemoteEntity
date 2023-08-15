@@ -8,9 +8,9 @@ namespace RemoteEntity
     public class EntityObserver<T> : IManagedObserver, IEntityObserver<T> where T : ICloneable<T>
     {
         public delegate void EntityUpdateHandler(T newValue);
-        public event  EntityUpdateHandler OnUpdate;
+        public event EntityUpdateHandler OnUpdate;
         private readonly ILogger logger;
-        private object lockObject = new object();
+        private readonly object lockObject = new object();
         public string EntityId { get; }
         
         private Action<T> updateObserver { get; set; }
@@ -76,26 +76,29 @@ namespace RemoteEntity
             logger.LogTrace($"Starting observer for '{EntityId}'");
             this.updateObserver = updateObserver;
             this.messageChannel = messageChannel;
-            return Task.Run(async () =>
-            {
-                while (await messageChannel.Reader.WaitToReadAsync())
+            return Task.Factory.StartNew(async () => 
                 {
-                    var message = await messageChannel.Reader.ReadAsync();
-                    if (message.EntityId != EntityId)
-                        return;
+                    while (await messageChannel.Reader.WaitToReadAsync())
+                    {
+                        var message = await messageChannel.Reader.ReadAsync();
+                        if (message.EntityId != EntityId)
+                            return;
 
-                    if (message.Value != null)
-                    {
-                        updateValue(message.Value, message.PublishTime);
-                    } else
-                    {
-                        updateValue(default, DateTimeOffset.MinValue);
+                        if (message.Value != null)
+                        {
+                            updateValue(message.Value, message.PublishTime);
+                        }
+                        else
+                        {
+                            updateValue(default, DateTimeOffset.MinValue);
+                        }
+
+                        if (this.updateObserver != null)
+                            updateObserver(Value);
                     }
-
-                    if (this.updateObserver != null)
-                        updateObserver(Value);
-                }
-            });
+                },
+                TaskCreationOptions.LongRunning
+            );
         }
 
         public void Stop()
@@ -106,6 +109,5 @@ namespace RemoteEntity
                 messageChannel.Writer.Complete();
             }
         }
-
     }
 }

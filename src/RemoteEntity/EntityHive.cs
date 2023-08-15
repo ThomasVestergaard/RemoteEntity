@@ -36,7 +36,7 @@ namespace RemoteEntity
             var dto = new EntityDto<T>(entityId, entity, DateTimeOffset.UtcNow);
 
             // Store state
-            if (!entityStorage.ContainsKey(entityId))
+            if (!entityStorage.ContainsKey(entityId)) //todo seems to be not needed in redis?
             {
                 entityStorage.Add(entityId, dto);
             }
