@@ -14,7 +14,7 @@ namespace RemoteEntity
         private List<IManagedObserver> observers { get; set; }
         private List<Task> channelReaderTasks { get; set; }
 
-        public EntityHive(IEntityStorage entityStorage, IEntityPubSub entityPublisher, ILogger logger)
+        public EntityHive(IEntityStorage entityStorage, IEntityPubSub entityPublisher, ILogger<EntityHive> logger)
         {
             this.entityStorage = entityStorage;
             this.entityPublisher = entityPublisher;

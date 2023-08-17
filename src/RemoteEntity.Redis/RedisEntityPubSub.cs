@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
@@ -9,13 +10,15 @@ namespace RemoteEntity.Redis
     public class RedisEntityPubSub : IEntityPubSub
     {
         private readonly ConnectionMultiplexer redisDb;
+        private readonly ILogger logger;
         private readonly string streamPrefix;
 
         private HashSet<string> subscribers { get; } = new();
 
-        public RedisEntityPubSub(ConnectionMultiplexer redisDb)
+        public RedisEntityPubSub(ConnectionMultiplexer redisDb, ILogger<RedisEntityPubSub> logger)
         {
             this.redisDb = redisDb;
+            this.logger = logger;
             streamPrefix = "entitystream.";
         }
 
@@ -34,8 +37,9 @@ namespace RemoteEntity.Redis
         public void Publish<T>(string entityId, EntityDto<T> entity)
         {
             var serialized = JsonConvert.SerializeObject(entity);
+            var streamName = getStreamName(entityId);
             redisDb.GetSubscriber().Publish(
-                new RedisChannel(getStreamName(entityId), RedisChannel.PatternMode.Auto),
+                new RedisChannel(streamName, RedisChannel.PatternMode.Auto),
                 Encoding.UTF8.GetBytes(serialized)
             );
         }
@@ -44,7 +48,9 @@ namespace RemoteEntity.Redis
         {
             var streamName = getStreamName(entityId);
             if (subscribers.Contains(streamName))
+            {
                 return;
+            }
 
             subscribers.Add(streamName);
             
@@ -54,13 +60,20 @@ namespace RemoteEntity.Redis
                 {
                     var bytes = (byte[])value;
                     if (bytes == null) return;
-                    
-                    var serializedContent = Encoding.UTF8.GetString(bytes);
-                    var deserializedEntity = JsonConvert.DeserializeObject<EntityDto<T>>(serializedContent); //todo if this fails should an event be emitted from the framework?
 
-                    if (handler != null && deserializedEntity != null)
+                    try
                     {
-                        handler(deserializedEntity);
+                        var serializedContent = Encoding.UTF8.GetString(bytes);
+                        var deserializedEntity = JsonConvert.DeserializeObject<EntityDto<T>>(serializedContent);
+
+                        if (handler != null && deserializedEntity != null)
+                        {
+                            handler(deserializedEntity);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex, "Error while handling incoming message");
                     }
                 }
             );

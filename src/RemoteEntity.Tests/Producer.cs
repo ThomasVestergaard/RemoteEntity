@@ -11,8 +11,8 @@ public class Producer
         var redis = ConnectionMultiplexer.Connect("localhost");
         
         var redisEntityStorage = new RedisEntityStorage(redis);
-        var redisEntityPubSub = new RedisEntityPubSub(redis);
-        var entityHive = new EntityHive(redisEntityStorage, redisEntityPubSub, NullLogger.Instance);
+        var redisEntityPubSub = new RedisEntityPubSub(redis, NullLogger<RedisEntityPubSub>.Instance);
+        var entityHive = new EntityHive(redisEntityStorage, redisEntityPubSub, NullLogger<EntityHive>.Instance);
         
         //redisEntityStorage.
         var obj = new SomeValueObject
