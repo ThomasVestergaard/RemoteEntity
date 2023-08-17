@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using RemoteEntity.Redis;
 using StackExchange.Redis;
@@ -11,7 +12,7 @@ public class Consumer
     {
         var redis = ConnectionMultiplexer.Connect("localhost");
         
-        var redisEntityStorage = new RedisEntityStorage(redis);
+        var redisEntityStorage = new RedisEntityStorage(redis, NullLogger<RedisEntityStorage>.Instance);
         var redisEntityPubSub = new RedisEntityPubSub(redis, NullLogger<RedisEntityPubSub>.Instance);
         var entityHive = new EntityHive(redisEntityStorage, redisEntityPubSub, NullLogger<EntityHive>.Instance);
         

@@ -15,7 +15,7 @@ public class IntegrationTests
     [Test]
     public async Task PublishedEntityIsReceivedBySubscriberSuccessfully()
     {
-        var redisEntityStorage = new RedisEntityStorage(RedisConnection);
+        var redisEntityStorage = new RedisEntityStorage(RedisConnection, NullLogger<RedisEntityStorage>.Instance);
         var redisEntityPubSub = new RedisEntityPubSub(RedisConnection, NullLogger<RedisEntityPubSub>.Instance);
         var entityHive = new EntityHive(redisEntityStorage, redisEntityPubSub, NullLogger<EntityHive>.Instance);
         var entityId = Guid.NewGuid().ToString();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using RemoteEntity.Redis;
 using StackExchange.Redis;
@@ -9,8 +10,7 @@ namespace RemoteEntity.Tests;
 [TestFixture]
 public class EntityStorageTests
 {
-    private static readonly RedisEntityStorage RedisEntityStorage 
-        = new(ConnectionMultiplexer.Connect("localhost"));
+    private static readonly RedisEntityStorage RedisEntityStorage = new(ConnectionMultiplexer.Connect("localhost"), NullLogger<RedisEntityStorage>.Instance);
     
     private readonly ConcurrentBag<string> _createdEntityIds = new();
 
