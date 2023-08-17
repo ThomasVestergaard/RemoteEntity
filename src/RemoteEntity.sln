@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RemoteEntity.Redis", "Remot
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteEntity.Tests", "RemoteEntity.Tests\RemoteEntity.Tests.csproj", "{4F2F356D-EC37-48D3-AED5-5DD04A6F2FBB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoveEntity.Sample", "RemoveEntity.Sample\RemoveEntity.Sample.csproj", "{B89168AA-DA58-44EB-BB63-40707D7C7229}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{4F2F356D-EC37-48D3-AED5-5DD04A6F2FBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F2F356D-EC37-48D3-AED5-5DD04A6F2FBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F2F356D-EC37-48D3-AED5-5DD04A6F2FBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B89168AA-DA58-44EB-BB63-40707D7C7229}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B89168AA-DA58-44EB-BB63-40707D7C7229}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B89168AA-DA58-44EB-BB63-40707D7C7229}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B89168AA-DA58-44EB-BB63-40707D7C7229}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

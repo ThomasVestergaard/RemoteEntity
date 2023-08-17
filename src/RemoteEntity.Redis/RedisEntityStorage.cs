@@ -1,19 +1,19 @@
-﻿using BeetleX.Redis;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace RemoteEntity.Redis
 {
     public class RedisEntityStorage : IEntityStorage
     {
-        private readonly RedisDB redisDb;
+        private readonly ConnectionMultiplexer redisDb;
         private readonly string keyPrefix;
 
-        public RedisEntityStorage(RedisDB redisDb)
+        public RedisEntityStorage(ConnectionMultiplexer redisDb)
         {
             this.redisDb = redisDb;
             keyPrefix = "entitystate.";
         }
-        public RedisEntityStorage(RedisDB redisDb, string keyPrefix)
+        public RedisEntityStorage(ConnectionMultiplexer redisDb, string keyPrefix)
         {
             this.redisDb = redisDb;
             this.keyPrefix = keyPrefix;
@@ -26,30 +26,27 @@ namespace RemoteEntity.Redis
 
         public bool ContainsKey(string key)
         {
-            if (redisDb.Exists(getKeyName(key)).GetAwaiter().GetResult() == 1)
+            if (redisDb.GetDatabase().KeyExists(getKeyName(key)))
                 return true;
 
             return false;
         }
 
-        public bool Add<T>(string key, T entity)
-        {
-            var serialized = JsonConvert.SerializeObject(entity);
-            redisDb.Set(getKeyName(key), serialized).GetAwaiter().GetResult();
-            return true;
-        }
+        public bool Add<T>(string key, T entity) => Set(key, entity);
 
         public bool Set<T>(string key, T entity)
         {
             var serialized = JsonConvert.SerializeObject(entity);
-            redisDb.Set(getKeyName(key), serialized).GetAwaiter().GetResult();
+            redisDb.GetDatabase().StringSet(getKeyName(key), serialized);
             return true;
         }
 
         public T Get<T>(string key)
         {
-            var serialized = redisDb.Get<string>(getKeyName(key)).GetAwaiter().GetResult();
+            var serialized = redisDb.GetDatabase().StringGet(getKeyName(key));
             return JsonConvert.DeserializeObject<T>(serialized);
         }
+
+        public void Delete(string key) => redisDb.GetDatabase().KeyDelete(getKeyName(key));
     }
 }
