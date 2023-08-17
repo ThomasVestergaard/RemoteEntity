@@ -8,13 +8,14 @@ namespace RemoteEntity
     public class EntityObserver<T> : IManagedObserver, IEntityObserver<T> where T : ICloneable<T>
     {
         public delegate void EntityUpdateHandler(T newValue);
-        public event EntityUpdateHandler OnUpdate;
+        public event EntityUpdateHandler OnUpdate = null!;
         private readonly ILogger logger;
         private readonly object lockObject = new object();
         public string EntityId { get; }
         
-        private Action<T> updateObserver { get; set; }
-        private Channel<EntityDto<T>> messageChannel { get; set; }
+        private Action<T> updateObserver { get; set; } = null!;
+        private Channel<EntityDto<T>> messageChannel { get; set; } = null!;
+
         public T Value
         {
             get
@@ -22,14 +23,14 @@ namespace RemoteEntity
                 lock (lockObject)
                 {
                     if (value == null)
-                        return default;
+                        return default!;
 
                     return value.Clone();
                 }
             }
         }
         
-        private T value { get; set; }
+        private T value { get; set; } = default!;
 
         public DateTimeOffset PublishTime
         {
@@ -68,7 +69,7 @@ namespace RemoteEntity
 
         internal Task Start(Channel<EntityDto<T>> messageChannel)
         {
-            return Start(messageChannel, null);
+            return Start(messageChannel, null!);
         }
         
         internal Task Start(Channel<EntityDto<T>> messageChannel, Action<T> updateObserver)
@@ -90,7 +91,7 @@ namespace RemoteEntity
                         }
                         else
                         {
-                            updateValue(default, DateTimeOffset.MinValue);
+                            updateValue(default!, DateTimeOffset.MinValue);
                         }
 
                         if (this.updateObserver != null)

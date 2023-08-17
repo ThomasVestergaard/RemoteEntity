@@ -9,7 +9,7 @@ namespace RemoteEntity
     public class EntityHive : IEntityHive
     {
         private readonly IEntityStorage entityStorage;
-        private readonly IEntityPubSub entityPublisher;
+        private readonly IEntityPubSub entityPublisher = null!;
         private readonly ILogger logger;
         private List<IManagedObserver> observers { get; set; }
         private List<Task> channelReaderTasks { get; set; }
@@ -54,7 +54,7 @@ namespace RemoteEntity
 
         public IEntityObserver<T> SubscribeToEntity<T>(string entityId) where T : ICloneable<T>
         {
-            return SubscribeToEntity<T>(entityId, null);
+            return SubscribeToEntity<T>(entityId, null!);
         }
 
         public IEntityObserver<T> SubscribeToEntity<T>(string entityId, Action<T> updateHandler) where T : ICloneable<T>
@@ -62,11 +62,14 @@ namespace RemoteEntity
             logger.LogInformation($"Subscribing to '{entityId}'");
             var toReturn = new EntityObserver<T>(entityId, logger);
 
-            // Try to get entity data from redis
+            // Try to get entity data from storage
             if (entityStorage.ContainsKey(entityId))
             {
                 var currentEntity = entityStorage.Get<EntityDto<T>>(entityId);
-                toReturn.updateValue(currentEntity.Value, currentEntity.PublishTime);
+                if (currentEntity != null)
+                {
+                    toReturn.updateValue(currentEntity.Value, currentEntity.PublishTime);
+                }
             }
 
             if (entityPublisher != null)

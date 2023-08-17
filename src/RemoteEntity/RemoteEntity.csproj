@@ -9,6 +9,7 @@
     <Authors>Thomas Vestergaard Fredsted</Authors>
     <Company>Thomas Vestergaard Fredsted</Company>
     <Product>TVestergaard.RemoteEntity</Product>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

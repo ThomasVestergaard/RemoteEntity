@@ -12,6 +12,6 @@ public abstract class DeepCloner<T> : ICloneable<T>
 {
     public T Clone()
     {
-        return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(this));
+        return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(this))!;
     }
 }

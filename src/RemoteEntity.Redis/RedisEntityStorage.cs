@@ -65,7 +65,7 @@ namespace RemoteEntity.Redis
             catch (Exception ex)
             {
                 logger.LogError(ex, "Failed to get entity");
-                return default;
+                return default(T);
             }
         }
 
