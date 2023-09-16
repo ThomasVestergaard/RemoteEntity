@@ -57,6 +57,19 @@ namespace RemoteEntity.Redis
             return true;
         }
 
+        public string GetRaw(string key)
+        {
+            try
+            {
+                return redisDb.GetDatabase().StringGet(getKeyName(key));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to get raw entity");
+                return String.Empty;
+            }
+        }
+        
         public T Get<T>(string key)
         {
             try
