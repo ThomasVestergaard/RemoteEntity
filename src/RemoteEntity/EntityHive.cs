@@ -57,6 +57,20 @@ namespace RemoteEntity
             return SubscribeToEntity<T>(entityId, null!);
         }
 
+        public T GetEntity<T>(string entityId) where T : ICloneable<T>
+        {
+            if (entityStorage.ContainsKey(entityId))
+            {
+                var currentEntity = entityStorage.Get<EntityDto<T>>(entityId);
+                if (currentEntity != null)
+                {
+                    return currentEntity.Value;
+                }
+            }
+
+            return default!;
+        }
+        
         public IEntityObserver<T> SubscribeToEntity<T>(string entityId, Action<T> updateHandler) where T : ICloneable<T>
         {
             logger.LogInformation($"Subscribing to '{entityId}'");

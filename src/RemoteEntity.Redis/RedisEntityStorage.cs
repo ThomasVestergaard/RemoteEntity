@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using StackExchange.Redis;
@@ -66,6 +68,21 @@ namespace RemoteEntity.Redis
             {
                 logger.LogError(ex, "Failed to get entity");
                 return default(T);
+            }
+        }
+
+        public List<string> GetKeys(int maxKeys = 1000)
+        {
+            try
+            {
+                var keys = redisDb.GetServers().First().Keys(redisDb.GetDatabase().Database, $"{keyPrefix}*", maxKeys);
+                return keys.Select(k => k.ToString().Replace(keyPrefix, "")).ToList();
+                
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to get all keys");
+                return default(List<string>);
             }
         }
 

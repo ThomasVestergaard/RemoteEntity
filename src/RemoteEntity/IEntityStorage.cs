@@ -9,7 +9,7 @@ namespace RemoteEntity
         bool Add<T>(string key, T entity);
         bool Set<T>(string key, T entity);
         T Get<T>(string key);
-        IEnumerable<string> GetKeys();
+        List<string> GetKeys(int maxKeys = 1000);
     }
 
 
