@@ -80,11 +80,18 @@ namespace RemoteEntity
             if (entityStorage.ContainsKey(entityId))
             {
                 var currentEntity = entityStorage.Get<EntityDto<T>>(entityId);
-                if (currentEntity != null)
+                toReturn.updateValue(currentEntity.Value, currentEntity.PublishTime);
+            } else 
+            {
+                var hasInitialSeedEntity = typeof(IInitialSeed<T>).IsAssignableFrom(typeof(T));
+                if (hasInitialSeedEntity)
                 {
-                    toReturn.updateValue(currentEntity.Value, currentEntity.PublishTime);
+                    var seedEntity = ((IInitialSeed<T>)Activator.CreateInstance(typeof(T))!).InitialSeedEntity();
+                    entityStorage.Add(entityId, seedEntity);
+                    toReturn.updateValue(seedEntity, DateTimeOffset.UtcNow);
                 }
             }
+            
 
             if (entityPublisher != null)
             {
