@@ -29,6 +29,7 @@ public static class Consumer
         {
             Console.WriteLine("Entity value when subscribed: null");
         } 
+        
             
     }
 }

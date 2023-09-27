@@ -10,5 +10,8 @@ public static class Program
         Thread.Sleep(500);
 
         Producer.Execute();
+        
+        Console.WriteLine("Done. Hit any key to quit");
+        Console.ReadKey();
     }
 }

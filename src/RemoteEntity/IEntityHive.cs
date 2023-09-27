@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic.FileIO;
 
 namespace RemoteEntity
 {
@@ -11,5 +12,6 @@ namespace RemoteEntity
         
         T GetEntity<T>(string entityId) where T : ICloneable<T>;
         Task Stop();
+        void Delete<T>(string entityId);
     }
 }
