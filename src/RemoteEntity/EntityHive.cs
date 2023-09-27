@@ -88,6 +88,7 @@ namespace RemoteEntity
                 {
                     var seedEntity = ((IInitialSeed<T>)Activator.CreateInstance(typeof(T))!).InitialSeedEntity();
                     entityStorage.Add(entityId, seedEntity);
+                    logger.LogInformation($"Added initial seed entity for '{entityId}'");
                     toReturn.updateValue(seedEntity, DateTimeOffset.UtcNow);
                 }
             }
