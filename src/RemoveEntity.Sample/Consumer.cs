@@ -29,6 +29,12 @@ public static class Consumer
         {
             Console.WriteLine("Entity value when subscribed: null");
         } 
+        
+        var observable2 = entityHive.SubscribeToEntity<SomeValueObject>("ObjectIdentifier", entity =>
+        {
+            // Handle updates as the come
+            Console.WriteLine($"CONSUMER2: Update received. Value is: '{entity.SomeText}'");
+        });
             
     }
 }

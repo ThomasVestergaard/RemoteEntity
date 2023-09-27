@@ -73,6 +73,20 @@ namespace RemoteEntity
         
         public IEntityObserver<T> SubscribeToEntity<T>(string entityId, Action<T> updateHandler) where T : ICloneable<T>
         {
+            var existingObserver = observers.Find(a => a.EntityId == entityId);
+            if (existingObserver != null)
+            {
+                logger.LogInformation($"Already subscribed to '{entityId}'. Adding update handler");
+                var asObserver = (IEntityObserver<T>)existingObserver;
+
+                if (updateHandler != null)
+                {
+                    asObserver.OnUpdate += value => updateHandler(value);
+                }
+
+                return asObserver;
+            }
+            
             logger.LogInformation($"Subscribing to '{entityId}'");
             var toReturn = new EntityObserver<T>(entityId, logger);
 
