@@ -124,6 +124,22 @@ namespace RemoteEntity
             return toReturn;
         }
 
+        public void Delete<T>(string entityId)
+        {
+            logger.LogInformation($"Deleting entity '{entityId}'");
+            var observer = observers.Find(a => a.EntityId == entityId);
+
+            entityStorage.Delete(entityId);
+            
+            if (observer != null)
+            {
+                // Unsubscribe if subscribed
+                entityPublisher.Unsubscribe(entityId);
+                observer.Stop();
+                observers.Remove(observer);
+            }
+        }
+        
         public Task Stop()
         {
             logger.LogInformation("Stopping EntityHive.");

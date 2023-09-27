@@ -21,7 +21,7 @@ public static class Producer
             SomeText = "Update"
         };
 
-        for(int i=0; i<10; i++)
+        for(int i=0; i<5; i++)
         {
             // Publish 10 messages
             obj.SomeText = $"Update no {i}";
@@ -39,5 +39,8 @@ public static class Producer
             Thread.Sleep(1000);
         }
 
+        Console.WriteLine($"PRODUCER: Deleting object");
+        entityHive.Delete<SomeValueObject>("ObjectIdentifier");
+        
     }
 }
