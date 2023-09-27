@@ -1,4 +1,6 @@
-﻿namespace RemoveEntity.Sample;
+﻿using RemoteEntity;
+
+namespace RemoveEntity.Sample;
 
 public static class Program
 {
