@@ -97,11 +97,13 @@ namespace RemoteEntity
                 toReturn.updateValue(currentEntity.Value, currentEntity.PublishTime);
             } else 
             {
+                // Create initial seed entity if possible
                 var hasInitialSeedEntity = typeof(IInitialSeed<T>).IsAssignableFrom(typeof(T));
                 if (hasInitialSeedEntity)
                 {
                     var seedEntity = ((IInitialSeed<T>)Activator.CreateInstance(typeof(T))!).InitialSeedEntity();
-                    entityStorage.Add(entityId, seedEntity);
+
+                    entityStorage.Add(entityId, new EntityDto<T>(entityId, seedEntity, DateTimeOffset.UtcNow));
                     logger.LogInformation($"Added initial seed entity for '{entityId}'");
                     toReturn.updateValue(seedEntity, DateTimeOffset.UtcNow);
                 }
