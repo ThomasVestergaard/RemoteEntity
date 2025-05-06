@@ -10,10 +10,24 @@ namespace RemoteEntity.Tests;
 [TestFixture]
 public class EntityStorageTests
 {
-    private static readonly RedisEntityStorage RedisEntityStorage = new(ConnectionMultiplexer.Connect("localhost"), NullLogger<RedisEntityStorage>.Instance);
-    
-    private readonly ConcurrentBag<string> _createdEntityIds = new();
+    private RedisEntityStorage RedisEntityStorage;
+    private ConcurrentBag<string> _createdEntityIds = new();
+    private RedisConnectionOptions redisConfig;
+    private RedisConnection redisConnection;
 
+    [SetUp]
+    public void Setup()
+    {
+        redisConfig= new RedisConnectionOptions
+        {
+            RedisHostName = "localhost",
+        };
+        redisConnection = new RedisConnection(redisConfig);
+        redisConnection.Start();
+        RedisEntityStorage  = new(redisConnection, NullLogger<RedisEntityStorage>.Instance);
+    }
+    
+    
     [TearDown]
     public void CleanUp()
     {

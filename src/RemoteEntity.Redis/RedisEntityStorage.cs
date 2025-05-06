@@ -9,19 +9,20 @@ namespace RemoteEntity.Redis
 {
     public class RedisEntityStorage : IEntityStorage
     {
-        private readonly ConnectionMultiplexer redisDb;
+        protected IConnectionMultiplexer redisDb => redisConnection.Multiplexer;
+        private readonly IRedisConnection redisConnection;
         private readonly ILogger logger;
         private readonly string keyPrefix;
 
-        public RedisEntityStorage(ConnectionMultiplexer redisDb, ILogger<RedisEntityStorage> logger)
+        public RedisEntityStorage(IRedisConnection redisConnection, ILogger<RedisEntityStorage> logger)
         {
-            this.redisDb = redisDb;
+            this.redisConnection = redisConnection;
             this.logger = logger;
             keyPrefix = "entitystate.";
         }
-        public RedisEntityStorage(ConnectionMultiplexer redisDb, ILogger<RedisEntityStorage> logger, string keyPrefix)
+        public RedisEntityStorage(IRedisConnection redisConnection, ILogger<RedisEntityStorage> logger, string keyPrefix)
         {
-            this.redisDb = redisDb;
+            this.redisConnection = redisConnection;
             this.keyPrefix = keyPrefix;
             this.logger = logger;
         }

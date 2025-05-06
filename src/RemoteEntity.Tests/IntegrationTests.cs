@@ -10,13 +10,25 @@ namespace RemoteEntity.Tests;
 [TestFixture]
 public class IntegrationTests
 {
-    private static readonly ConnectionMultiplexer RedisConnection = ConnectionMultiplexer.Connect("localhost");
+    private RedisConnectionOptions redisConfig;
+    private RedisConnection redisConnection;
+
+    [SetUp]
+    public void Setup()
+    {
+        redisConfig= new RedisConnectionOptions
+        {
+            RedisHostName = "localhost",
+        };
+        redisConnection = new RedisConnection(redisConfig);
+        redisConnection.Start();
+    }
     
     [Test]
     public async Task PublishedEntityIsReceivedBySubscriberSuccessfully()
     {
-        var redisEntityStorage = new RedisEntityStorage(RedisConnection, NullLogger<RedisEntityStorage>.Instance);
-        var redisEntityPubSub = new RedisEntityPubSub(RedisConnection, NullLogger<RedisEntityPubSub>.Instance);
+        var redisEntityStorage = new RedisEntityStorage(redisConnection, NullLogger<RedisEntityStorage>.Instance);
+        var redisEntityPubSub = new RedisEntityPubSub(redisConnection, NullLogger<RedisEntityPubSub>.Instance);
         var entityHive = new EntityHive(redisEntityStorage, redisEntityPubSub, NullLogger<EntityHive>.Instance);
         var entityId = Guid.NewGuid().ToString();
         

@@ -1,8 +1,20 @@
-﻿using RemoteEntity;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using RemoteEntity;
+using RemoteEntity.Redis;
 
-namespace RemoveEntity.Sample;
 
-public static class Program
+var hostBuilder = Host.CreateApplicationBuilder(args);
+hostBuilder.Services.Configure<RedisConnectionOptions>(hostBuilder.Configuration.GetSection("RemoteEntity"));
+
+var host = hostBuilder.Build(); 
+
+var config = host.Services.GetService<IOptions<RedisConnectionOptions>>();
+
+int halt = 0;
+/*public static class Program
 {
     public static void Main(string[] args)
     {
@@ -14,4 +26,4 @@ public static class Program
         Console.WriteLine("Done. Hit any key to quit");
         Console.ReadKey();
     }
-}
+}*/

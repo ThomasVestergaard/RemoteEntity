@@ -9,22 +9,23 @@ namespace RemoteEntity.Redis
 {
     public class RedisEntityPubSub : IEntityPubSub
     {
-        private readonly ConnectionMultiplexer redisDb;
+        protected IConnectionMultiplexer redisDb => redisConnection.Multiplexer;
+        private readonly IRedisConnection redisConnection;
         private readonly ILogger logger;
         private readonly string streamPrefix;
 
         private HashSet<string> subscribers { get; } = new();
 
-        public RedisEntityPubSub(ConnectionMultiplexer redisDb, ILogger<RedisEntityPubSub> logger)
+        public RedisEntityPubSub(IRedisConnection redisConnection, ILogger<RedisEntityPubSub> logger)
         {
-            this.redisDb = redisDb;
+            this.redisConnection = redisConnection;
             this.logger = logger;
             streamPrefix = "entitystream.";
         }
 
-        public RedisEntityPubSub(ConnectionMultiplexer redisDb, string streamPrefix)
+        public RedisEntityPubSub(IRedisConnection redisConnection, string streamPrefix)
         {
-            this.redisDb = redisDb;
+            this.redisConnection = redisConnection;
             this.streamPrefix = streamPrefix;
 
         }
