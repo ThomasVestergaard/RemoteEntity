@@ -26,4 +26,4 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Stop containers
-      run: docker-compose -f "docker-compose-workflow.yaml" down 
+      run: docker compose -f "docker-compose-workflow.yaml" down 
