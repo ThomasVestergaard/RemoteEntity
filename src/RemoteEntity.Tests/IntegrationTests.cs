@@ -36,8 +36,8 @@ public class IntegrationTests
                 );
 
             await Task.Delay(100);
-            Assert.AreEqual(FlagPosition.Lowered, flag.Position);
-            Assert.IsNull(observer.Value);
+            Assert.That(FlagPosition.Lowered, Is.EqualTo(flag.Position));
+            Assert.That(observer.Value, Is.Null);
 
             entityHive.PublishEntity(new Entity { Value = "SomeValue" }, entityId);
 
@@ -45,7 +45,7 @@ public class IntegrationTests
 
             observer.Stop();
 
-            Assert.AreEqual("SomeValue", entity.Value);
+            Assert.That("SomeValue", Is.EqualTo(entity.Value));
         }
         finally
         {

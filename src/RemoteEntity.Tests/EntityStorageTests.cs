@@ -30,7 +30,7 @@ public class EntityStorageTests
         RedisEntityStorage.Add(key, entity);
         var fetchedEntity = RedisEntityStorage.Get<Entity>(key);
         
-        Assert.AreEqual("SomeValue", fetchedEntity.Value);
+        Assert.That("SomeValue", Is.EqualTo(fetchedEntity.Value));
     }
     
     [Test]
@@ -43,7 +43,7 @@ public class EntityStorageTests
             
         RedisEntityStorage.Delete(key);
         var containsKey = RedisEntityStorage.ContainsKey(key);
-        Assert.IsFalse(containsKey);
+        Assert.That(containsKey, Is.False);
     }
     
     [Test]
@@ -55,7 +55,7 @@ public class EntityStorageTests
             
         RedisEntityStorage.Delete(key);
         var containsKey = RedisEntityStorage.ContainsKey(key);
-        Assert.IsFalse(containsKey);
+        Assert.That(containsKey, Is.False);
     }
     
     [Test]
@@ -64,7 +64,7 @@ public class EntityStorageTests
         var key = CreateEntityKey();
         
         var containsKey = RedisEntityStorage.ContainsKey(key);
-        Assert.IsFalse(containsKey);
+        Assert.That(containsKey, Is.False);
     }
 
     private class Entity

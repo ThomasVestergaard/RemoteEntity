@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="NRedisStack" Version="0.8.0" />
+        <PackageReference Include="NRedisStack" Version="1.0.0" />
     </ItemGroup>
 
     <ItemGroup>
