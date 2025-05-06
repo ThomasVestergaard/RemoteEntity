@@ -18,7 +18,7 @@ jobs:
       with:
         dotnet-version: 9.0.x
     - name: Start containers
-      run: docker-compose -f "docker-compose-workflow.yaml" up -d --build
+      run: docker compose -f "docker-compose-workflow.yaml" up -d --build
     - name: Restore dependencies
       run:  dotnet restore
     - name: Build
