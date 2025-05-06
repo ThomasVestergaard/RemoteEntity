@@ -130,4 +130,5 @@ In no particular order
 - NATS/Jetstream backend using streams and KV store
 - Metrics logger
 - Serialization abstraction. Default to System.Json
+- Prototype a standalone backend, ditching dependencies on redis, nats, whatever
 
