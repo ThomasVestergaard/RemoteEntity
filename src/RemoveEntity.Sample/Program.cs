@@ -1,29 +1,27 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using RemoteEntity;
 using RemoteEntity.Redis;
+using RemoveEntity.Sample;
 
 
 var hostBuilder = Host.CreateApplicationBuilder(args);
-hostBuilder.Services.Configure<RedisConnectionOptions>(hostBuilder.Configuration.GetSection("RemoteEntity"));
+hostBuilder.Configuration.AddJsonFile("appsettings.json");
+hostBuilder.AddRemoteEntityWithRedisBackEnd();
+hostBuilder.Services
+    .AddSingleton<Consumer>()
+    .AddSingleton<Producer>();
 
-var host = hostBuilder.Build(); 
+var host = hostBuilder.Build();
+host.StartRemoteEntityRedisConnection();
 
-var config = host.Services.GetService<IOptions<RedisConnectionOptions>>();
+var consumer = host.Services.GetRequiredService<Consumer>();
+await Task.Factory.StartNew(consumer.Execute, TaskCreationOptions.LongRunning);
 
-int halt = 0;
-/*public static class Program
-{
-    public static void Main(string[] args)
-    {
-        Task.Factory.StartNew(Consumer.Execute, TaskCreationOptions.LongRunning);
-        Thread.Sleep(500);
+Thread.Sleep(500);
 
-        Producer.Execute();
-        
-        Console.WriteLine("Done. Hit any key to quit");
-        Console.ReadKey();
-    }
-}*/
+var producer = host.Services.GetRequiredService<Producer>();
+producer.Execute();
+
+Console.WriteLine("Done.");
+await host.RunAsync();

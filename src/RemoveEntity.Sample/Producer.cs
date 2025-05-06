@@ -1,24 +1,11 @@
-﻿using Microsoft.Extensions.Logging.Abstractions;
-using RemoteEntity;
-using RemoteEntity.Redis;
-using StackExchange.Redis;
+﻿using RemoteEntity;
 
 namespace RemoveEntity.Sample;
 
-public static class Producer
+public class Producer(IEntityHive entityHive)
 {
-    public static void Execute()
+    public void Execute()
     {
-        var redisConfig = new RedisConnectionOptions
-        {
-            RedisHostName = "localhost",
-        };
-        var redisConnection = new RedisConnection(redisConfig);
-        
-        var redisEntityStorage = new RedisEntityStorage(redisConnection, NullLogger<RedisEntityStorage>.Instance);
-        var redisEntityPubSub = new RedisEntityPubSub(redisConnection, NullLogger<RedisEntityPubSub>.Instance);
-        var entityHive = new EntityHive(redisEntityStorage, redisEntityPubSub, NullLogger<EntityHive>.Instance);
-
         var obj = new SomeValueObject
         {
             SomeNumber = 456.55m,
