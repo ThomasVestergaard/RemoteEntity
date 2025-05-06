@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <PackageId>TVestergaard.RemoteEntity</PackageId>
     <Description>RemoteEntity is a small framework, that helps facilitate microservice communication. It is based upon a producer/consumer pattern where the producer is the one who 'owns' a specific entity and the consumers are observing this entity over the network and reacting on chages.</Description>
     <Version>0.1.0-beta</Version>
@@ -10,6 +10,7 @@
     <Company>Thomas Vestergaard Fredsted</Company>
     <Product>TVestergaard.RemoteEntity</Product>
     <Nullable>enable</Nullable>
+    <LangVersion>latestmajor</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
