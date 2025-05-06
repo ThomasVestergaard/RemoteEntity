@@ -123,3 +123,11 @@ RemoteEntity relies on being able to store and fetch serialized objects and to p
 
 The implementation of these two dependencies are put in a seperate nuget package. You can make your own implementations by implementing the IEntityStorage and IEntityPubSub interfaces.
 
+# Roadmap
+In no particular order
+- Standalone UI tool for browsing entities
+- Helper methods for easy DI integration and hooking into the Microsoft eco system
+- NATS/Jetstream backend using streams and KV store
+- Metrics logger
+- Serialization abstraction. Default to System.Json
+
