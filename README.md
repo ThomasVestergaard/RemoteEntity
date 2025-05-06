@@ -31,7 +31,7 @@ To get started, you need access to a Redis instance. Run one locally in docker u
 
 Install the nuget packages.
 ```csharp
-Install-Package TVestergaard.RemoteEntity.Redis -Version 0.2.1-beta
+Install-Package TVestergaard.RemoteEntity.Redis -Version 0.2.6-beta
 ```
 
 ## Define a class that should be shared across services
