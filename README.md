@@ -72,7 +72,7 @@ Alternatively, implement your own cloning logic.
 RemoteEntity__RedisHostName=localhost
 ```
 
-## Register RemoteEntity in you application
+## Register RemoteEntity in your application
 Register dependencies in DI and start the redis connection.
 ```csharp
     var hostBuilder = Host.CreateApplicationBuilder(args);
