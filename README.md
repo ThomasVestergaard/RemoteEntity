@@ -26,6 +26,8 @@ To get started, you need access to a Redis instance. Run one locally in docker u
 
     docker run -p 6379:6379 --name some-redis -d redis:latest
 
+# Seamless integration with .NET hosting
+Extensionmethods are provided to easy handle configuration and dependency injection.
 
 # Getting started
 
@@ -38,6 +40,13 @@ Install-Package TVestergaard.RemoteEntity.Redis -Version 0.2.6-beta
 The assembly this class lives in should be referenced on both the producer and consumer side.
 
 ```csharp
+    public class MyClass : DeepCloner<MyClass> {
+        public string SomeValue { get; set; }        
+    }
+```
+
+Alternatively, implement your own cloning logic.
+```csharp
     public class MyClass : ICloneable<MyClass> {
         public string SomeValue { get; set; }
 
@@ -49,28 +58,36 @@ The assembly this class lives in should be referenced on both the producer and c
     }
 ```
 
-If you are in a hurry and don't want to implement the Clone() method, you can make use of DeepCloner that does it for you. Works great with simple DTO's but may not be suited with more complex object. Use with caution.
-
-```csharp
-    public class MyClass : DeepCloner<MyClass> {
-        public string SomeValue { get; set; }        
-    }
+## Configure redis connection
+### Using appsettings.json
+```json
+"RemoteEntity": 
+{
+    "RedisHostName": "localhost"
+}
 ```
 
-
-## Initiate hive
-EntityHive is used in both the producer and the consumer.
-```csharp
-    var redisDb = new RedisDB();
-    var redisEntityStorage = new RedisEntityStorage(redisDb);
-    var redisEntityPubSub = new RedisEntityPubSub(redisDb);    
-    redisDb.DataFormater = new JsonFormater();
-    redisDb.Host.AddWriteHost("localhost");
-    var entityHive = new EntityHive(redisEntityStorage, redisEntityPubSub, NullLogger.Instance);
+### Using environment variables
+```bash
+RemoteEntity__RedisHostName=localhost
 ```
 
-## Setup producer
+## Register RemoteEntity in you application
+Register dependencies in DI and start the redis connection.
+```csharp
+    var hostBuilder = Host.CreateApplicationBuilder(args);
+    hostBuilder.Configuration.AddJsonFile("appsettings.json"); // If you use appsettings
+    hostBuilder.Configuration.AddEnvironmentVariables(); // If you use env vars
+    hostBuilder.AddRemoteEntityWithRedisBackEnd();    
+    
+    var host = hostBuilder.Build();
+    host.StartRemoteEntityRedisConnection();
+```
+
+## Produce some entities to be published
 ```csharp    
+    var entityHive = host.Services.GetRequiredService<IEntityHive>();
+
     var entity = new MyClass() {
         SomeValue = "Hello there!";
     }
@@ -112,6 +129,21 @@ When stopping your application, make sure to call Stop() on the EntityHive insta
     await entityHive.Stop();
 ```
 
+# Tips, tricks and best practises
+Here are a few implementation tips and tricks based on real-life experience
+## Put entity id's on the entity class
+To avoid having a entity id's hardcoded all over the place, make a helper method on each entity to generate an apropiate entity id. Often entity id's are dynamic and are generated based on different input variables. This logic should be centralized.
+```csharp
+    public class MyClass : DeepCloner<MyClass> {
+        public static string EntityId(int input1, string input2) => $"MyClass_{input1}_{input2}";
+
+        public string SomeValue { get; set; }        
+    }
+```
+
+## Have entities in a shared assembly
+Entities should be very simple POCO's and should not have any dependencies to business logic. It should be possible to make a seperate class library project that contains only entities. This assembly is then referenced by producers and consumers alike.
+
 # Samples
 A simple producer and consumer sample application is included in this repo. I recommend you play around with them to get familiar with the framework behaviour.
 
@@ -125,10 +157,10 @@ The implementation of these two dependencies are put in a seperate nuget package
 
 # Roadmap
 In no particular order
-- Standalone UI tool for browsing entities
-- Helper methods for easy DI integration and hooking into the Microsoft eco system
-- NATS/Jetstream backend using streams and KV store
-- Metrics logger
-- Serialization abstraction. Default to System.Json
-- Prototype a standalone backend, ditching dependencies on redis, nats, whatever
+- [ ] Standalone UI tool for browsing entities
+- [x] Helper methods for easy DI integration and hooking into the Microsoft eco system
+- [ ] NATS/Jetstream backend using streams and KV store
+- [ ] Metrics logger
+- [ ] Serialization abstraction. Default to System.Json
+- [ ] Prototype a standalone backend, ditching dependencies on redis, nats, whatever
 

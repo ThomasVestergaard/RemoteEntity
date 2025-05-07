@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace RemoteEntity.Redis
@@ -37,7 +37,7 @@ namespace RemoteEntity.Redis
 
         public void Publish<T>(string entityId, EntityDto<T> entity)
         {
-            var serialized = JsonConvert.SerializeObject(entity);
+            var serialized = JsonSerializer.Serialize(entity);
             var streamName = getStreamName(entityId);
             redisDb.GetSubscriber().Publish(
                 new RedisChannel(streamName, RedisChannel.PatternMode.Auto),
@@ -65,7 +65,7 @@ namespace RemoteEntity.Redis
                     try
                     {
                         var serializedContent = Encoding.UTF8.GetString(bytes);
-                        var deserializedEntity = JsonConvert.DeserializeObject<EntityDto<T>>(serializedContent);
+                        var deserializedEntity = JsonSerializer.Deserialize<EntityDto<T>>(serializedContent);
 
                         if (handler != null && deserializedEntity != null)
                         {

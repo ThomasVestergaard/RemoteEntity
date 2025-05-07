@@ -1,5 +1,4 @@
-using Newtonsoft.Json;
-
+using System.Text.Json;
 namespace RemoteEntity;
 
 /// <summary>
@@ -12,6 +11,6 @@ public abstract class DeepCloner<T> : ICloneable<T>
 {
     public T Clone()
     {
-        return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(this))!;
+        return JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(this))!;
     }
 }

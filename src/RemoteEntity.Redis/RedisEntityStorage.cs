@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace RemoteEntity.Redis
@@ -46,7 +46,7 @@ namespace RemoteEntity.Redis
         {
             try
             {
-                var serialized = JsonConvert.SerializeObject(entity);
+                var serialized = JsonSerializer.Serialize(entity);
                 redisDb.GetDatabase().StringSet(getKeyName(key), serialized);
             }
             catch (Exception ex)
@@ -76,7 +76,7 @@ namespace RemoteEntity.Redis
             try
             {
                 var serialized = redisDb.GetDatabase().StringGet(getKeyName(key));
-                return JsonConvert.DeserializeObject<T>(serialized);
+                return JsonSerializer.Deserialize<T>(serialized);
             }
             catch (Exception ex)
             {

@@ -7,6 +7,7 @@ using RemoveEntity.Sample;
 
 var hostBuilder = Host.CreateApplicationBuilder(args);
 hostBuilder.Configuration.AddJsonFile("appsettings.json");
+hostBuilder.Configuration.AddEnvironmentVariables();
 hostBuilder.AddRemoteEntityWithRedisBackEnd();
 hostBuilder.Services
     .AddSingleton<Consumer>()
