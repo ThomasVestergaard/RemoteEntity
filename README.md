@@ -164,4 +164,5 @@ In no particular order
 - [ ] Serialization abstraction. Default to System.Json
 - [ ] Prototype a standalone backend, ditching dependencies on redis, nats, whatever
 - [ ] Move away from Redis pub/sub to Redis streams
+- [ ] Configurable duplication detection
 
