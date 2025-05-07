@@ -51,7 +51,7 @@ public class IntegrationTests
             Assert.That(FlagPosition.Lowered, Is.EqualTo(flag.Position));
             Assert.That(observer.Value, Is.Null);
 
-            entityHive.PublishEntity(new Entity { Value = "SomeValue" }, entityId);
+            entityHive.PublishEntity(new Entity { Value = "SomeValue" }, entityId, new PublishOptions { PublishDuplicates = true});
 
             await flag.WaitForRaised(maxWait: TimeSpan.FromSeconds(5));
 
