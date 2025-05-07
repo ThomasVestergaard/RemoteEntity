@@ -66,10 +66,8 @@ public class IntegrationTests
     } 
 
     
-    private class Entity : ICloneable<Entity>
-    {
+    private class Entity : DeepCloner<Entity>
+    { 
         public string Value { get; set; }
-
-        public Entity Clone() => new() { Value = Value };
     }
 }

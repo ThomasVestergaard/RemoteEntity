@@ -9,11 +9,12 @@ namespace RemoteEntity
     public class EntityHive : IEntityHive
     {
         private readonly IEntityStorage entityStorage;
-        private readonly IEntityPubSub entityPublisher = null!;
+        private readonly IEntityPubSub? entityPublisher;
         private readonly ILogger logger;
         private List<IManagedObserver> observers { get; set; }
         private List<Task> channelReaderTasks { get; set; }
-
+        private DuplicateDetector duplicateDetector = new DuplicateDetector();
+        
         public EntityHive(IEntityStorage entityStorage, IEntityPubSub entityPublisher, ILogger<EntityHive> logger)
         {
             this.entityStorage = entityStorage;
@@ -31,25 +32,19 @@ namespace RemoteEntity
             channelReaderTasks = new List<Task>();
         }
         
-        public void PublishEntity<T>(T entity, string entityId) where T : ICloneable<T>
+        public void PublishEntity<T>(T entity, string entityId, PublishOptions? publishOptions = null) where T : ICloneable<T>
         {
+            var options = publishOptions ?? PublishOptions.Default();
             var dto = new EntityDto<T>(entityId, entity, DateTimeOffset.UtcNow);
 
-            // Store state
-            if (!entityStorage.ContainsKey(entityId)) //todo seems to be not needed in redis?
+            var isDuplicate =  duplicateDetector.IsDuplicate(entityId, entityId);
+            if (isDuplicate && !options.PublishDuplicates)
             {
-                entityStorage.Add(entityId, dto);
+                return;
             }
-            else
-            {
-                entityStorage.Set(entityId, dto);
-            }
-
-            // Publish update
-            if (entityPublisher != null)
-            {
-                entityPublisher.Publish(entityId, dto);
-            }
+            
+            entityStorage.Set(entityId, dto);
+            entityPublisher?.Publish(entityId, dto);
         }
 
         public IEntityObserver<T> SubscribeToEntity<T>(string entityId) where T : ICloneable<T>
@@ -62,10 +57,7 @@ namespace RemoteEntity
             if (entityStorage.ContainsKey(entityId))
             {
                 var currentEntity = entityStorage.Get<EntityDto<T>>(entityId);
-                if (currentEntity != null)
-                {
-                    return currentEntity.Value;
-                }
+                return currentEntity.Value;
             }
 
             return default!;
@@ -135,8 +127,7 @@ namespace RemoteEntity
             
             if (observer != null)
             {
-                // Unsubscribe if subscribed
-                entityPublisher.Unsubscribe(entityId);
+                entityPublisher?.Unsubscribe(entityId);
                 observer.Stop();
                 observers.Remove(observer);
             }
@@ -149,7 +140,7 @@ namespace RemoteEntity
             {
                 foreach (var entityObserver in observers)
                 {
-                    entityPublisher.Unsubscribe(entityObserver.EntityId);
+                    entityPublisher?.Unsubscribe(entityObserver.EntityId);
                     entityObserver.Stop();
                 }
 
