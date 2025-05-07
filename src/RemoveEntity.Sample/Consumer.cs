@@ -1,19 +1,11 @@
-﻿using Microsoft.Extensions.Logging.Abstractions;
-using RemoteEntity;
-using RemoteEntity.Redis;
-using StackExchange.Redis;
+﻿using RemoteEntity;
 
 namespace RemoveEntity.Sample;
 
-public static class Consumer
+public class Consumer(IEntityHive entityHive)
 {
-    public static void Execute()
+    public void Execute()
     {
-        var redis = ConnectionMultiplexer.Connect("localhost");
-        
-        var redisEntityStorage = new RedisEntityStorage(redis, NullLogger<RedisEntityStorage>.Instance);
-        var redisEntityPubSub = new RedisEntityPubSub(redis, NullLogger<RedisEntityPubSub>.Instance);
-        var entityHive = new EntityHive(redisEntityStorage, redisEntityPubSub, NullLogger<EntityHive>.Instance);
         
         var observable = entityHive.SubscribeToEntity<SomeValueObject>("ObjectIdentifier", entity =>
         {

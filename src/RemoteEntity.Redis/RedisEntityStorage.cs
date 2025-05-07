@@ -1,27 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace RemoteEntity.Redis
 {
     public class RedisEntityStorage : IEntityStorage
     {
-        private readonly ConnectionMultiplexer redisDb;
+        protected IConnectionMultiplexer redisDb => redisConnection.Multiplexer;
+        private readonly IRedisConnection redisConnection;
         private readonly ILogger logger;
         private readonly string keyPrefix;
 
-        public RedisEntityStorage(ConnectionMultiplexer redisDb, ILogger<RedisEntityStorage> logger)
+        public RedisEntityStorage(IRedisConnection redisConnection, ILogger<RedisEntityStorage> logger)
         {
-            this.redisDb = redisDb;
+            this.redisConnection = redisConnection;
             this.logger = logger;
             keyPrefix = "entitystate.";
         }
-        public RedisEntityStorage(ConnectionMultiplexer redisDb, ILogger<RedisEntityStorage> logger, string keyPrefix)
+        public RedisEntityStorage(IRedisConnection redisConnection, ILogger<RedisEntityStorage> logger, string keyPrefix)
         {
-            this.redisDb = redisDb;
+            this.redisConnection = redisConnection;
             this.keyPrefix = keyPrefix;
             this.logger = logger;
         }
@@ -45,7 +46,7 @@ namespace RemoteEntity.Redis
         {
             try
             {
-                var serialized = JsonConvert.SerializeObject(entity);
+                var serialized = JsonSerializer.Serialize(entity);
                 redisDb.GetDatabase().StringSet(getKeyName(key), serialized);
             }
             catch (Exception ex)
@@ -75,7 +76,7 @@ namespace RemoteEntity.Redis
             try
             {
                 var serialized = redisDb.GetDatabase().StringGet(getKeyName(key));
-                return JsonConvert.DeserializeObject<T>(serialized);
+                return JsonSerializer.Deserialize<T>(serialized);
             }
             catch (Exception ex)
             {

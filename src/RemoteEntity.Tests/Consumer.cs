@@ -10,10 +10,14 @@ public class Consumer
 {
     public void Initialize()
     {
-        var redis = ConnectionMultiplexer.Connect("localhost");
+        var redisConfig = new RedisConnectionOptions
+        {
+            RedisHostName = "localhost",
+        };
+        var redisConnection = new RedisConnection(redisConfig);
         
-        var redisEntityStorage = new RedisEntityStorage(redis, NullLogger<RedisEntityStorage>.Instance);
-        var redisEntityPubSub = new RedisEntityPubSub(redis, NullLogger<RedisEntityPubSub>.Instance);
+        var redisEntityStorage = new RedisEntityStorage(redisConnection, NullLogger<RedisEntityStorage>.Instance);
+        var redisEntityPubSub = new RedisEntityPubSub(redisConnection, NullLogger<RedisEntityPubSub>.Instance);
         var entityHive = new EntityHive(redisEntityStorage, redisEntityPubSub, NullLogger<EntityHive>.Instance);
         
         var observable = entityHive.SubscribeToEntity<SomeValueObject>("ObjectIdentifier", entity =>
