@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RemoteEntity;
 
-public class DuplicateDetector
+public class DuplicateDetector : IDuplicateDetector
 {
     private readonly ConcurrentDictionary<string, string> hashMap = new();
     private readonly MD5 md5 = MD5.Create();

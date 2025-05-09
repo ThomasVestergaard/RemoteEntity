@@ -14,7 +14,9 @@ public static class HostApplicationBuilderExtensions
             .AddSingleton(sp => sp.GetRequiredService<IOptions<RedisConnectionOptions>>().Value)
             .AddSingleton<IRedisConnection, RedisConnection>()
             .AddSingleton<IEntityStorage, RedisEntityStorage>()
-            .AddSingleton<IEntityPubSub, RedisEntityPubSub>();
+            .AddSingleton<IEntityPubSub, RedisEntityPubSub>()
+            .AddTransient<IDuplicateDetector, DuplicateDetector>()
+            .AddSingleton<HiveOptions>();
         return hostBuilder;
     }
     

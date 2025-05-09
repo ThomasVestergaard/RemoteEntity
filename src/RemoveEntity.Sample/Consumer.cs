@@ -6,7 +6,7 @@ public class Consumer(IEntityHive entityHive)
 {
     public void Execute()
     {
-        
+        entityHive.HiveOptions.PublishDuplicates = false;
         var observable = entityHive.SubscribeToEntity<SomeValueObject>("ObjectIdentifier", entity =>
         {
             // Handle updates as the come

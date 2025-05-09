@@ -13,32 +13,24 @@ namespace RemoteEntity
         private readonly ILogger logger;
         private List<IManagedObserver> observers { get; set; }
         private List<Task> channelReaderTasks { get; set; }
-        private DuplicateDetector duplicateDetector = new DuplicateDetector();
-        
-        public EntityHive(IEntityStorage entityStorage, IEntityPubSub entityPublisher, ILogger<EntityHive> logger)
+        private IDuplicateDetector duplicateDetector;
+        public HiveOptions HiveOptions { get; }
+        public EntityHive(IEntityStorage entityStorage, IEntityPubSub entityPublisher, HiveOptions hiveOptions, IDuplicateDetector duplicateDetector, ILogger<EntityHive> logger)
         {
+            this.HiveOptions = hiveOptions;
             this.entityStorage = entityStorage;
+            this.duplicateDetector = duplicateDetector;
             this.entityPublisher = entityPublisher;
             this.logger = logger;
             observers = new List<IManagedObserver>();
             channelReaderTasks = new List<Task>();
         }
-
-        public EntityHive(IEntityStorage entityStorage, ILogger logger)
+  
+        public void PublishEntity<T>(T entity, string entityId) where T : ICloneable<T>
         {
-            this.entityStorage = entityStorage;
-            this.logger = logger;
-            observers = new List<IManagedObserver>();
-            channelReaderTasks = new List<Task>();
-        }
-        
-        public void PublishEntity<T>(T entity, string entityId, PublishOptions? publishOptions = null) where T : ICloneable<T>
-        {
-            var options = publishOptions ?? PublishOptions.Default();
             var dto = new EntityDto<T>(entityId, entity, DateTimeOffset.UtcNow);
-
-            var isDuplicate =  duplicateDetector.IsDuplicate(entityId, entityId);
-            if (isDuplicate && !options.PublishDuplicates)
+            var isDuplicate =  duplicateDetector.IsDuplicate(entity, entityId);
+            if (isDuplicate && !HiveOptions.PublishDuplicates)
             {
                 return;
             }
