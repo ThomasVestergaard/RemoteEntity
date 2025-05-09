@@ -33,28 +33,15 @@ Extensionmethods are provided to easy handle configuration and dependency inject
 
 Install the nuget packages.
 ```csharp
-Install-Package TVestergaard.RemoteEntity.Redis -Version 0.3.0-beta
+Install-Package TVestergaard.RemoteEntity.Redis -Version 0.3.1-beta
 ```
 
 ## Define a class that should be shared across services
 The assembly this class lives in should be referenced on both the producer and consumer side.
 
 ```csharp
-    public class MyClass : DeepCloner<MyClass> {
-        public string SomeValue { get; set; }        
-    }
-```
-
-Alternatively, implement your own cloning logic.
-```csharp
     public class MyClass : ICloneable<MyClass> {
-        public string SomeValue { get; set; }
-
-        public MyClass Clone() {
-            return new MyClass {
-                SomeValue = this.SomeValue;
-            }
-        }
+        public string SomeValue { get; set; }        
     }
 ```
 
@@ -130,6 +117,10 @@ When stopping your application, make sure to call Stop() on the EntityHive insta
 ```
 
 # Tips, tricks and best practises
+## Avoid large entities
+Entities are meant to be small in nature. Keep them simple and do not publish liarge lists.
+This is partticular true if you use redis ans backend. Redis is single threaded and a large publish will block redis until done.
+
 Here are a few implementation tips and tricks based on real-life experience
 ## Put entity id's on the entity class
 To avoid having a entity id's hardcoded all over the place, make a helper method on each entity to generate an apropiate entity id. Often entity id's are dynamic and are generated based on different input variables. This logic should be centralized.
@@ -143,6 +134,32 @@ To avoid having a entity id's hardcoded all over the place, make a helper method
 
 ## Have entities in a shared assembly
 Entities should be very simple POCO's and should not have any dependencies to business logic. It should be possible to make a seperate class library project that contains only entities. This assembly is then referenced by producers and consumers alike.
+
+## Version control your entities
+As entities often are shared in a distributed system, it serves as an integration point where changes might break the integration if not managed properly. It can be helpful to på version number in the entity class names and use the [Obsolete] attribute to indicate that a migration is ongoing.
+```csharp
+    [Obsolete]
+    public class MyClass_v1 : DeepCloner<MyClass> {
+        public static string EntityId(int input1, string input2) => $"MyClass_v1_{input1}_{input2}";
+        public string SomeValue { get; set; }        
+    }
+```
+Then put a new version into production parallel with the old one.
+```csharp    
+    public class MyClass_v2 : DeepCloner<MyClass> {
+        public static string EntityId(int input1, string input2) => $"MyClass_v2_{input1}_{input2}";
+        public string SomeChangedValue { get; set; }
+        public int AnotherValue {get; set;}
+    }
+```
+## Be aware of duplicate publishes
+To avoid too much chatter on the network, try to avoid publishing identical enties. RemoteEntity has a built-in duplicate detector to help this. Per default, it allows duplicate publishes, but this can be overridden.
+```csharp    
+    var entityHive = host.Services.GetRequiredService<IEntityHive>();
+    entityHive.HiveOptions.PublishDuplicates = false;
+```
+The duplicate detector tracks a md5 hash of the latest published entity per entityId. If the current hash equals the latest published hash and PublishDuplicates is set to false, the entity is not published.
+Check the full implementation of duplicate detection in DuplicateDetector.cs
 
 # Samples
 A simple producer and consumer sample application is included in this repo. I recommend you play around with them to get familiar with the framework behaviour.

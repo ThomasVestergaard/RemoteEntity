@@ -25,7 +25,7 @@ namespace RemoteEntity
                     if (value == null)
                         return default!;
 
-                    return value.Clone();
+                    return value.DeepClone();
                 }
             }
         }

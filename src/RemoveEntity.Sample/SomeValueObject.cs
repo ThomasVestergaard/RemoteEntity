@@ -1,7 +1,7 @@
 ﻿using RemoteEntity;
 namespace RemoveEntity.Sample;
 
-public class SomeValueObject : DeepCloner<SomeValueObject>, IInitialSeed<SomeValueObject>
+public class SomeValueObject : ICloneable<SomeValueObject>, IInitialSeed<SomeValueObject>
 {
     // This is the object that is sent fra the producer to the consumer. This could be put in a shared class library.
 
