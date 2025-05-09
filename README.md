@@ -136,7 +136,7 @@ To avoid having a entity id's hardcoded all over the place, make a helper method
 Entities should be very simple POCO's and should not have any dependencies to business logic. It should be possible to make a seperate class library project that contains only entities. This assembly is then referenced by producers and consumers alike.
 
 ## Version control your entities
-As entities often are shared in a distributed system, it serves as an integration point where changes might break the integration if not managed properly. It can be helpful to på version number in the entity class names and use the [Obsolete] attribute to indicate that a migration is ongoing.
+As entities often are shared in a distributed system, it serves as an integration point where changes might break the integration if not managed properly. It can be helpful to put a version number in the entity class names and use the [Obsolete] attribute to indicate that a migration is ongoing.
 ```csharp
     [Obsolete]
     public class MyClass_v1 : DeepCloner<MyClass> {
@@ -181,5 +181,5 @@ In no particular order
 - [ ] Serialization abstraction. Default to System.Json
 - [ ] Prototype a standalone backend, ditching dependencies on redis, nats, whatever
 - [ ] Move away from Redis pub/sub to Redis streams
-- [ ] Configurable duplication detection
+- [x] Configurable duplication detection
 
