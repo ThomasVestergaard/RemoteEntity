@@ -35,14 +35,16 @@ namespace RemoteEntity.Redis
             return $"{streamPrefix}{entityId}".ToLower();
         }
 
-        public void Publish<T>(string entityId, EntityDto<T> entity)
+        public long Publish<T>(string entityId, EntityDto<T> entity)
         {
             var serialized = JsonSerializer.Serialize(entity);
             var streamName = getStreamName(entityId);
+            var bytes = Encoding.UTF8.GetBytes(serialized); 
             redisDb.GetSubscriber().Publish(
                 new RedisChannel(streamName, RedisChannel.PatternMode.Auto),
-                Encoding.UTF8.GetBytes(serialized)
+                bytes
             );
+            return bytes.Length;
         }
         
         public void Subscribe<T>(string entityId, Action<EntityDto<T>> handler)

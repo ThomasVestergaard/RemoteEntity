@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using RemoteEntity.Stats;
 
-namespace RemoteEntity.Stats;
+namespace RemoteEntity.StatsSink.Elasticsearch;
 
 public class StatsCache : IStatsCache
 {
@@ -56,7 +55,8 @@ public class StatsCache : IStatsCache
             
             foreach (var sink in sinks)
             {
-                sink.Flush(flattened);
+                // TODO: Flush
+                //sink.Flush(flattened);
             }
             cache.Clear();
         }

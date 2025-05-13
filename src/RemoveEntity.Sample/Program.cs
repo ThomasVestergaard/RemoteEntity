@@ -13,6 +13,8 @@ hostBuilder.Services
     .AddSingleton<Consumer>()
     .AddSingleton<Producer>();
 
+hostBuilder.Services.BuildServiceProvider();
+
 var host = hostBuilder.Build();
 host.StartRemoteEntityRedisConnection();
 

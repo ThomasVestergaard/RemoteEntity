@@ -1,4 +1,6 @@
-﻿namespace RemoteEntity.Stats;
+﻿using RemoteEntity.Stats;
+
+namespace RemoteEntity.StatsSink.Elasticsearch;
 
 public interface IStatsCache
 {

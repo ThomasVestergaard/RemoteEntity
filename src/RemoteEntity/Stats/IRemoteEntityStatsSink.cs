@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace RemoteEntity.Stats;
+﻿namespace RemoteEntity.Stats;
 
 public interface IRemoteEntityStatsSink
 {
-    Task Flush(IEnumerable<StatEntry> stats);
+    void RegisterPublish(StatTypeEnum type, string keyName);
+    void RegisterPublish(StatTypeEnum type, string keyName, long keyValue);
+    
 }
