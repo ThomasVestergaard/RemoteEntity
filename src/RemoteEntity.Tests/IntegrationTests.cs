@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using RemoteEntity.Redis;
+using RemoteEntity.Stats;
 
 namespace RemoteEntity.Tests;
 
@@ -28,7 +30,8 @@ public class IntegrationTests
     {
         var redisEntityStorage = new RedisEntityStorage(redisConnection, NullLogger<RedisEntityStorage>.Instance);
         var redisEntityPubSub = new RedisEntityPubSub(redisConnection, NullLogger<RedisEntityPubSub>.Instance);
-        var entityHive = new EntityHive(redisEntityStorage, redisEntityPubSub, new HiveOptions(), new DuplicateDetector(), NullLogger<EntityHive>.Instance);
+        var statsSinkManager = new StatsSinkManager(new List<IRemoteEntityStatsSink>());
+        var entityHive = new EntityHive(redisEntityStorage, redisEntityPubSub, new HiveOptions(), new DuplicateDetector(), NullLogger<EntityHive>.Instance, statsSinkManager);
         var entityId = Guid.NewGuid().ToString();
         
         try

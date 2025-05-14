@@ -1,8 +1,9 @@
-﻿namespace RemoteEntity.Stats;
+﻿using System.Collections.Generic;
+
+namespace RemoteEntity.Stats;
 
 public interface IRemoteEntityStatsSink
 {
-    void RegisterPublish(StatTypeEnum type, string keyName);
-    void RegisterPublish(StatTypeEnum type, string keyName, long keyValue);
+    void ProcessStats(IEnumerable<StatEntry> stats);
     
 }

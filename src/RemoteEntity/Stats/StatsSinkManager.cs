@@ -4,21 +4,31 @@ namespace RemoteEntity.Stats;
 
 public class StatsSinkManager(IEnumerable<IRemoteEntityStatsSink> statsSinks) : IStatsSinkManager
 {
-    public void RegisterPublish(StatTypeEnum type, string keyName)
+    public void RegisterPublish(string entityId, string entityTypeName, long byteSize)
     {
+        var stats = new List<StatEntry>();
+        stats.Add(new StatEntry
+        {
+            StatType = StatTypeEnum.PublishCountByEntityId,
+            StatKey = entityId,
+            StatValue = 1
+        });
+        
+        stats.Add(new StatEntry
+        {
+            StatType = StatTypeEnum.PublishCountByEntityType,
+            StatKey = entityTypeName,
+            StatValue = 1
+        });
+        
+        stats.Add(new StatEntry
+        {
+            StatType = StatTypeEnum.PublishSizeByEntityId,
+            StatKey = entityId,
+            StatValue = byteSize
+        });
+        
         foreach (var sink in statsSinks)
-            sink.RegisterPublish(type, keyName);
-    }
-
-    public void RegisterPublish(StatTypeEnum type, string keyName, long keyValue)
-    {
-        foreach (var sink in statsSinks)
-            sink.RegisterPublish(type, keyName, keyValue);
-    }
-
-    
-    public void RegisterPublish(string entityId, string entityDtypeName, long byteSize)
-    {
-       // TODO: Map to sink methods 
+            sink.ProcessStats(stats);
     }
 }

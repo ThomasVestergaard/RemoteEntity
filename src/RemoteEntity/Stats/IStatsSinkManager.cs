@@ -2,5 +2,5 @@
 
 public interface IStatsSinkManager
 {
-    void RegisterPublish(string entityId, string entityDtypeName, long byteSize);
+    void RegisterPublish(string entityId, string entityTypeName, long byteSize);
 }
