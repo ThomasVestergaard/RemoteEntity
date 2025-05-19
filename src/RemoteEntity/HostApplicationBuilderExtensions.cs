@@ -12,4 +12,11 @@ public static class HostApplicationBuilderExtensions
         hostBuilder.Services.AddScoped<IStatsSinkManager, StatsSinkManager>();
         return hostBuilder;
     }
+    
+    public static IHost StartRemoteEntity(this IHost host)
+    {
+        var hive = host.Services.GetRequiredService<IEntityHive>();
+        hive.Start();
+        return host;
+    }
 }

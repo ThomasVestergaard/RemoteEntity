@@ -12,6 +12,7 @@ namespace RemoteEntity
         string GetRaw(string key);
         List<string> GetKeys(int maxKeys = 1000);
         void Delete(string key);
+        void Start();
     }
 
 

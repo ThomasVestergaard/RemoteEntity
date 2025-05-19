@@ -31,4 +31,12 @@ public class StatsSinkManager(IEnumerable<IRemoteEntityStatsSink> statsSinks) : 
         foreach (var sink in statsSinks)
             sink.ProcessStats(stats);
     }
+
+    public void Start()
+    {
+        foreach (var sink in statsSinks)
+        {
+            sink.Start();
+        }
+    }
 }

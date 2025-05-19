@@ -7,6 +7,28 @@ internal class StatsCache
     private object lockObject = new object();
     private Dictionary<StatTypeEnum, Dictionary<string, long>> cache = new();
 
+    public Dictionary<StatTypeEnum, Dictionary<string, long>> Stats
+    {
+        get
+        {
+            lock (lockObject)
+            {
+                return cache.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => new Dictionary<string, long>(kvp.Value)
+                );
+            }
+        }
+    }
+
+    public void Clear()
+    {
+        lock (lockObject)
+        {
+            cache.Clear();
+        }
+    }
+    
     private void EnsureTypeAndKeyExists(StatTypeEnum type, string keyName)
     {
         if (!cache.ContainsKey(type))

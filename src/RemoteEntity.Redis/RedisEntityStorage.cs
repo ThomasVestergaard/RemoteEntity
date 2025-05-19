@@ -101,5 +101,9 @@ namespace RemoteEntity.Redis
         }
 
         public void Delete(string key) => redisDb.GetDatabase().KeyDelete(getKeyName(key));
+        public void Start()
+        {
+            redisConnection.Start();
+        }
     }
 }

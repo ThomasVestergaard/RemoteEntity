@@ -131,10 +131,18 @@ namespace RemoteEntity
                 observers.Remove(observer);
             }
         }
+
+        public async Task Start()
+        {
+            logger.LogInformation("Starting EntityHive");
+            entityPublisher?.Start();
+            entityPublisher?.Start();
+            statsSinkManager?.Start();
+        }
         
         public Task Stop()
         {
-            logger.LogInformation("Stopping EntityHive.");
+            logger.LogInformation("Stopping EntityHive");
             return Task.Run(async () =>
             {
                 foreach (var entityObserver in observers)
@@ -144,7 +152,7 @@ namespace RemoteEntity
                 }
 
                 await Task.WhenAll(channelReaderTasks);
-                logger.LogInformation("EntityHive stopped.");
+                logger.LogInformation("EntityHive stopped");
             });
             
         }

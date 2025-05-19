@@ -88,5 +88,10 @@ namespace RemoteEntity.Redis
                 new RedisChannel(getStreamName(entityId), RedisChannel.PatternMode.Auto)
             );
         }
+
+        public void Start()
+        {
+            redisConnection.Start();
+        }
     }
 }

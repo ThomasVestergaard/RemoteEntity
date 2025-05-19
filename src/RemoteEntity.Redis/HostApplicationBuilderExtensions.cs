@@ -19,11 +19,4 @@ public static class HostApplicationBuilderExtensions
             .AddSingleton<HiveOptions>();
         return hostBuilder;
     }
-    
-    public static IHost StartRemoteEntityRedisConnection(this IHost host)
-    {
-        var redisConnection = host.Services.GetRequiredService<IRedisConnection>();
-        redisConnection.Start();
-        return host;
-    }
 }

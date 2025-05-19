@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RemoteEntity;
 using RemoteEntity.Redis;
 using RemoveEntity.Sample;
 
@@ -16,7 +17,7 @@ hostBuilder.Services
 hostBuilder.Services.BuildServiceProvider();
 
 var host = hostBuilder.Build();
-host.StartRemoteEntityRedisConnection();
+host.StartRemoteEntity();
 
 var consumer = host.Services.GetRequiredService<Consumer>();
 await Task.Factory.StartNew(consumer.Execute, TaskCreationOptions.LongRunning);

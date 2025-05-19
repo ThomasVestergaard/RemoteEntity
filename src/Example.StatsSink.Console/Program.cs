@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RemoteEntity;
 using RemoteEntity.Redis;
 using RemoteEntity.StatsSink.Console;
 
@@ -16,6 +17,6 @@ hostBuilder.Services.AddHostedService<Consumer>();
 hostBuilder.Services.AddHostedService<Producer>();
 
 var host = hostBuilder.Build();
-host.StartRemoteEntityRedisConnection();
+host.StartRemoteEntity();
 Console.WriteLine("Example is running. Wait for console sink to flush stats to the console.");
 await host.RunAsync();
