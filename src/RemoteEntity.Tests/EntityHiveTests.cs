@@ -101,7 +101,33 @@ public class EntityHiveTests
             It.Is<string>(s => s == "1"),
             It.Is<string>(s => s == typeof(Entity).FullName!),
             It.Is<long>(s => s == 500)), Times.Once);
+    }
 
+    [Test]
+    public async Task ShouldCallEntityStorageStart_OnStart()
+    {
+        var hive = new EntityHive(entityStorageMock.Object, entityPubSubMock.Object, hiveOptions, duplicateDetectorMock.Object, loggerMock.Object, statsSinksManagerMock.Object);
+        await hive.Start();
+        
+        entityStorageMock.Verify(s => s.Start(), Times.Once);
+    }
+    
+    [Test]
+    public async Task ShouldCallEntityPubSubStart_OnStart()
+    {
+        var hive = new EntityHive(entityStorageMock.Object, entityPubSubMock.Object, hiveOptions, duplicateDetectorMock.Object, loggerMock.Object, statsSinksManagerMock.Object);
+        await hive.Start();
+        
+        entityPubSubMock.Verify(s => s.Start(), Times.Once);
+    }
+    
+    [Test]
+    public async Task ShouldCallSinkManagerStart_OnStart()
+    {
+        var hive = new EntityHive(entityStorageMock.Object, entityPubSubMock.Object, hiveOptions, duplicateDetectorMock.Object, loggerMock.Object, statsSinksManagerMock.Object);
+        await hive.Start();
+        
+        statsSinksManagerMock.Verify(s => s.Start(), Times.Once);
     }
     
     private class Entity : ICloneable<Entity>

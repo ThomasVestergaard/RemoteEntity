@@ -136,7 +136,7 @@ namespace RemoteEntity
         {
             logger.LogInformation("Starting EntityHive");
             entityPublisher?.Start();
-            entityPublisher?.Start();
+            entityStorage.Start();
             statsSinkManager?.Start();
         }
         
