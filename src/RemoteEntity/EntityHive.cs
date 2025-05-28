@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using RemoteEntity.Stats;
 
 namespace RemoteEntity
 {
@@ -11,17 +12,21 @@ namespace RemoteEntity
         private readonly IEntityStorage entityStorage;
         private readonly IEntityPubSub? entityPublisher;
         private readonly ILogger logger;
+        private readonly IStatsSinkManager statsSinkManager;
+
         private List<IManagedObserver> observers { get; set; }
         private List<Task> channelReaderTasks { get; set; }
         private IDuplicateDetector duplicateDetector;
         public HiveOptions HiveOptions { get; }
-        public EntityHive(IEntityStorage entityStorage, IEntityPubSub entityPublisher, HiveOptions hiveOptions, IDuplicateDetector duplicateDetector, ILogger<EntityHive> logger)
+        public EntityHive(IEntityStorage entityStorage, IEntityPubSub entityPublisher, HiveOptions hiveOptions, IDuplicateDetector duplicateDetector, ILogger<EntityHive> logger, IStatsSinkManager statsSinkManager)
         {
-            this.HiveOptions = hiveOptions;
+            HiveOptions = hiveOptions;
             this.entityStorage = entityStorage;
             this.duplicateDetector = duplicateDetector;
             this.entityPublisher = entityPublisher;
             this.logger = logger;
+            this.statsSinkManager = statsSinkManager;
+
             observers = new List<IManagedObserver>();
             channelReaderTasks = new List<Task>();
         }
@@ -36,7 +41,9 @@ namespace RemoteEntity
             }
             
             entityStorage.Set(entityId, dto);
-            entityPublisher?.Publish(entityId, dto);
+            var publishedBytes = entityPublisher?.Publish(entityId, dto);
+            if (publishedBytes != null)
+                statsSinkManager.RegisterPublish(entityId, typeof(T).FullName!, publishedBytes.Value);
         }
 
         public IEntityObserver<T> SubscribeToEntity<T>(string entityId) where T : ICloneable<T>
@@ -124,10 +131,18 @@ namespace RemoteEntity
                 observers.Remove(observer);
             }
         }
+
+        public async Task Start()
+        {
+            logger.LogInformation("Starting EntityHive");
+            entityPublisher?.Start();
+            entityStorage.Start();
+            statsSinkManager?.Start();
+        }
         
         public Task Stop()
         {
-            logger.LogInformation("Stopping EntityHive.");
+            logger.LogInformation("Stopping EntityHive");
             return Task.Run(async () =>
             {
                 foreach (var entityObserver in observers)
@@ -137,7 +152,7 @@ namespace RemoteEntity
                 }
 
                 await Task.WhenAll(channelReaderTasks);
-                logger.LogInformation("EntityHive stopped.");
+                logger.LogInformation("EntityHive stopped");
             });
             
         }

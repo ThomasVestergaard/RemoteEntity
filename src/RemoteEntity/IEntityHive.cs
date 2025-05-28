@@ -11,6 +11,7 @@ namespace RemoteEntity
         IEntityObserver<T> SubscribeToEntity<T>(string entityId) where T : ICloneable<T>;
         
         T GetEntity<T>(string entityId) where T : ICloneable<T>;
+        Task Start();
         Task Stop();
         void Delete<T>(string entityId);
     }
