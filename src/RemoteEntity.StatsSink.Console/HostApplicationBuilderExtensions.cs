@@ -13,7 +13,7 @@ public static class HostApplicationBuilderExtensions
             FlushToConsoleInterval = flushToConsoleInterval
         };
         hostBuilder.Services.AddSingleton(options);
-        hostBuilder.Services.AddTransient<IRemoteEntityStatsSink, ConsoleStatsSink>();
+        hostBuilder.Services.AddScoped<IRemoteEntityStatsSink, ConsoleStatsSink>();
         return hostBuilder;
     }
 }

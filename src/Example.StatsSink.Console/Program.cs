@@ -11,7 +11,8 @@ using RemoteEntity.StatsSink.Console;
 var hostBuilder = Host.CreateApplicationBuilder(args);
 hostBuilder.Configuration.AddJsonFile("appsettings.json");
 hostBuilder.Configuration.AddEnvironmentVariables();
-hostBuilder.AddRemoteEntityWithRedisBackEnd()
+hostBuilder
+    .AddRemoteEntityWithRedisBackEnd()
     .AddRemoteEntityConsoleStatsSink(TimeSpan.FromSeconds(5)); // Set sink to flush every 5 secs
 hostBuilder.Services.AddHostedService<Consumer>();
 hostBuilder.Services.AddHostedService<Producer>();
