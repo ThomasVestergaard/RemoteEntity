@@ -33,7 +33,7 @@ Extensionmethods are provided to easy handle configuration and dependency inject
 
 Install the nuget packages.
 ```csharp
-Install-Package TVestergaard.RemoteEntity.Redis -Version 0.3.1-beta
+Install-Package TVestergaard.RemoteEntity.Redis -Version 0.4.0-beta
 ```
 
 ## Define a class that should be shared across services
@@ -59,7 +59,7 @@ The assembly this class lives in should be referenced on both the producer and c
 RemoteEntity__RedisHostName=localhost
 ```
 
-## Register RemoteEntity in your application
+## Register RemoteEntity in your application 
 Register dependencies in DI and start the redis connection.
 ```csharp
     var hostBuilder = Host.CreateApplicationBuilder(args);
@@ -71,7 +71,7 @@ Register dependencies in DI and start the redis connection.
     host.StartRemoteEntityRedisConnection();
 ```
 
-## Produce some entities to be published
+## Produce some entities
 ```csharp    
     var entityHive = host.Services.GetRequiredService<IEntityHive>();
 
@@ -177,7 +177,7 @@ In no particular order
 - [ ] Standalone UI tool for browsing entities
 - [x] Helper methods for easy DI integration and hooking into the Microsoft eco system
 - [ ] NATS/Jetstream backend using streams and KV store
-- [ ] Metrics logger
+- [X] Metrics logger
 - [ ] Serialization abstraction. Default to System.Json
 - [ ] Prototype a standalone backend, ditching dependencies on redis, nats, whatever
 - [x] Configurable duplication detection

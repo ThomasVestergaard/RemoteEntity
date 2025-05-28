@@ -1,6 +1,6 @@
 ﻿using RemoteEntity;
 
-namespace RemoveEntity.Sample;
+namespace Example.GettingStarted;
 
 public class Consumer(IEntityHive entityHive)
 {

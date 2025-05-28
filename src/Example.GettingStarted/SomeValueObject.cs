@@ -1,5 +1,5 @@
 ﻿using RemoteEntity;
-namespace RemoveEntity.Sample;
+namespace Example.GettingStarted;
 
 public class SomeValueObject : ICloneable<SomeValueObject>, IInitialSeed<SomeValueObject>
 {

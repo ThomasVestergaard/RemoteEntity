@@ -10,7 +10,6 @@
     <ItemGroup>
       <ProjectReference Include="..\RemoteEntity.Redis\RemoteEntity.Redis.csproj" />
       <ProjectReference Include="..\RemoteEntity.StatsSink.Console\RemoteEntity.StatsSink.Console.csproj" />
-      <ProjectReference Include="..\RemoteEntity\RemoteEntity.csproj" />
     </ItemGroup>
 
     <ItemGroup>

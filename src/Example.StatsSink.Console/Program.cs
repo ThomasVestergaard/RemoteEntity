@@ -6,8 +6,6 @@ using RemoteEntity;
 using RemoteEntity.Redis;
 using RemoteEntity.StatsSink.Console;
 
-// TODO: Before merge to main, remember to change reference to nuget source
-
 var hostBuilder = Host.CreateApplicationBuilder(args);
 hostBuilder.Configuration.AddJsonFile("appsettings.json");
 hostBuilder.Configuration.AddEnvironmentVariables();

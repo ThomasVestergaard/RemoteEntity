@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RemoteEntity;
 using RemoteEntity.Redis;
-using RemoveEntity.Sample;
+using Example.GettingStarted;
 
 
 var hostBuilder = Host.CreateApplicationBuilder(args);
