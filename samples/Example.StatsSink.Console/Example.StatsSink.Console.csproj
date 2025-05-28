@@ -8,15 +8,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\RemoteEntity.Redis\RemoteEntity.Redis.csproj" />
-      <ProjectReference Include="..\RemoteEntity.StatsSink.Console\RemoteEntity.StatsSink.Console.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Remove="appsettings.json" />
       <Content Include="appsettings.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="RemoteEntity.StatsSink.Console" Version="0.4.1-beta" />
+      <PackageReference Include="TVestergaard.RemoteEntity.Redis" Version="0.4.1-beta" />
     </ItemGroup>
 
 </Project>
