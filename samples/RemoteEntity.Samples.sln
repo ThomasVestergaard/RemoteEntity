@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.GettingStarted", "E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.StatsSink.Console", "Example.StatsSink.Console\Example.StatsSink.Console.csproj", "{EA41C8FF-F596-46FB-B2AD-D216CE8394DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.StatsSink.Elasticsearch", "Example.StatsSink.Elasticsearch\Example.StatsSink.Elasticsearch.csproj", "{7063D5BE-E64A-4383-A6BD-675BBBDA457A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{EA41C8FF-F596-46FB-B2AD-D216CE8394DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA41C8FF-F596-46FB-B2AD-D216CE8394DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA41C8FF-F596-46FB-B2AD-D216CE8394DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7063D5BE-E64A-4383-A6BD-675BBBDA457A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7063D5BE-E64A-4383-A6BD-675BBBDA457A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7063D5BE-E64A-4383-A6BD-675BBBDA457A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7063D5BE-E64A-4383-A6BD-675BBBDA457A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

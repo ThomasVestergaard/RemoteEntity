@@ -16,7 +16,7 @@
 
     <ItemGroup>
       <PackageReference Include="RemoteEntity.StatsSink.Console" Version="0.4.1-beta" />
-      <PackageReference Include="TVestergaard.RemoteEntity.Redis" Version="0.4.1-beta" />
+      <PackageReference Include="TVestergaard.RemoteEntity.Redis" Version="0.5.0-beta" />
     </ItemGroup>
 
 </Project>
