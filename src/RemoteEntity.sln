@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StatsSinks", "StatsSinks", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteEntity.StatsSink.Console", "RemoteEntity.StatsSink.Console\RemoteEntity.StatsSink.Console.csproj", "{5507F4F3-B061-4E96-8B73-4C24AFC652E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteEntity.StatsSink.ElasticSearch", "RemoteEntity.StatsSink.ElasticSearch\RemoteEntity.StatsSink.ElasticSearch.csproj", "{02397B78-95CC-491C-8CFE-755A5B539DE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{5507F4F3-B061-4E96-8B73-4C24AFC652E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5507F4F3-B061-4E96-8B73-4C24AFC652E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5507F4F3-B061-4E96-8B73-4C24AFC652E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02397B78-95CC-491C-8CFE-755A5B539DE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02397B78-95CC-491C-8CFE-755A5B539DE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02397B78-95CC-491C-8CFE-755A5B539DE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02397B78-95CC-491C-8CFE-755A5B539DE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,5 +50,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5507F4F3-B061-4E96-8B73-4C24AFC652E4} = {E2AD7A38-E2AC-4527-8492-4724F8F25755}
+		{02397B78-95CC-491C-8CFE-755A5B539DE9} = {E2AD7A38-E2AC-4527-8492-4724F8F25755}
 	EndGlobalSection
 EndGlobal

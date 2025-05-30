@@ -4,5 +4,6 @@ public enum StatTypeEnum
 {
     PublishCountByEntityId = 1,
     PublishCountByEntityType = 2,
-    PublishSizeByEntityId = 3
+    PublishSizeByEntityId = 3,
+    PublishSizeByEntityType = 4
 }
