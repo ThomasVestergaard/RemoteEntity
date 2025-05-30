@@ -23,5 +23,5 @@ hostBuilder.Services.AddSingleton(new ElasticsearchClient(new Uri("http://localh
 
 var host = hostBuilder.Build();
 host.StartRemoteEntity();
-Console.WriteLine("Example is running. Wait for console sink to flush stats to the console.");
+Console.WriteLine("Example is running. Wait for console sink to flush stats to elastic.");
 await host.RunAsync();
