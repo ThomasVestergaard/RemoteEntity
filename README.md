@@ -1,3 +1,5 @@
+[![NuGet](https://img.shields.io/nuget/dt/TVestergaard.RemoteEntity.svg)](https://www.nuget.org/packages/TVestergaard.RemoteEntity)
+
 # What is this?
 RemoteEntity is a small framework, that helps facilitate microservice communication.
 It is based upon a producer/consumer pattern where the producer is the one who 'owns' a specific entity and the consumers are observing this entity over the network and reacting on chages.
