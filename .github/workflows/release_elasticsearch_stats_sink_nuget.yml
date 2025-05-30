@@ -1,0 +1,30 @@
+name: Publish elasticsearch stats sink to nuget
+on:
+  release:
+    types:
+      - published
+
+defaults:
+  run:
+    working-directory: ./src
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 9.0.x
+    - name: Restore dependencies
+      run:  dotnet restore
+    - name: Build
+      run: dotnet build -c release --no-restore
+    - name: Test
+      run: dotnet test -c release --no-build --verbosity normal
+    - name: Nuget pack
+      run: dotnet pack RemoteEntity.StatsSink.ElasticSearch/RemoteEntity.StatsSink.ElasticSearch.csproj --no-restore -p:PackageVersion=${{ github.event.release.tag_name }} -c Release
+    - name: Push nuget
+      run: dotnet nuget push -k ${{ secrets.NUGET_APIKEY }} "RemoteEntity.StatsSink.ElasticSearch/bin/Release/*.nupkg" --source nuget.org

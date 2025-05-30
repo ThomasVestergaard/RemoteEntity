@@ -28,6 +28,13 @@ public class StatsSinkManager(IEnumerable<IRemoteEntityStatsSink> statsSinks) : 
             StatValue = byteSize
         });
         
+        stats.Add(new StatEntry
+        {
+            StatType = StatTypeEnum.PublishSizeByEntityType,
+            StatKey = entityTypeName,
+            StatValue = byteSize
+        });
+        
         foreach (var sink in statsSinks)
             sink.ProcessStats(stats);
     }
