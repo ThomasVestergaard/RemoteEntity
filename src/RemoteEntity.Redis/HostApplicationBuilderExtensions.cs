@@ -6,7 +6,7 @@ namespace RemoteEntity.Redis;
 
 public static class HostApplicationBuilderExtensions
 {
-    public static IHostApplicationBuilder AddRemoteEntityWithRedisBackEnd(this HostApplicationBuilder hostBuilder)
+    public static IHostApplicationBuilder AddRemoteEntityWithRedisBackEnd(this IHostApplicationBuilder hostBuilder)
     {
         hostBuilder.AddRemoteEntityCore();
         hostBuilder.Services
