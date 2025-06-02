@@ -4,6 +4,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using RemoteEntity.Stats;
+using RemoteEntity.Tags;
 
 namespace RemoteEntity
 {
@@ -33,7 +34,12 @@ namespace RemoteEntity
   
         public void PublishEntity<T>(T entity, string entityId) where T : ICloneable<T>
         {
-            var dto = new EntityDto<T>(entityId, entity, DateTimeOffset.UtcNow);
+            PublishEntity(entity, entityId, new List<IEntityTag>());
+        }
+
+        public void PublishEntity<T>(T entity, string entityId, IEnumerable<IEntityTag> tags) where T : ICloneable<T>
+        {
+            var dto = new EntityDto<T>(entityId, entity, DateTimeOffset.UtcNow, tags);
             var isDuplicate =  duplicateDetector.IsDuplicate(entity, entityId);
             if (isDuplicate && !HiveOptions.PublishDuplicates)
             {
@@ -45,7 +51,7 @@ namespace RemoteEntity
             if (publishedBytes != null)
                 statsSinkManager.RegisterPublish(entityId, typeof(T).FullName!, publishedBytes.Value);
         }
-
+        
         public IEntityObserver<T> SubscribeToEntity<T>(string entityId) where T : ICloneable<T>
         {
             return SubscribeToEntity<T>(entityId, null!);
@@ -94,7 +100,7 @@ namespace RemoteEntity
                 {
                     var seedEntity = ((IInitialSeed<T>)Activator.CreateInstance(typeof(T))!).InitialSeedEntity();
 
-                    entityStorage.Add(entityId, new EntityDto<T>(entityId, seedEntity, DateTimeOffset.UtcNow));
+                    entityStorage.Add(entityId, new EntityDto<T>(entityId, seedEntity, DateTimeOffset.UtcNow, new List<IEntityTag>()));
                     logger.LogInformation($"Added initial seed entity for '{entityId}'");
                     toReturn.updateValue(seedEntity, DateTimeOffset.UtcNow);
                 }

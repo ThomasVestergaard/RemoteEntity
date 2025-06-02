@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RemoteEntity;
+namespace RemoteEntity.Tags;
 
 public interface IEntityTag
 {

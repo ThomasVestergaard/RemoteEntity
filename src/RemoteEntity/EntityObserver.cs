@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using RemoteEntity.Tags;
 
 namespace RemoteEntity
 {
@@ -31,6 +33,19 @@ namespace RemoteEntity
         }
         
         private T value { get; set; } = default!;
+
+        public List<IEntityTag> Tags
+        {
+            get
+            {
+                lock (lockObject)
+                {
+                    return tags;
+                }
+            }
+        }
+
+        private List<IEntityTag> tags { get; set; } = new();
 
         public DateTimeOffset PublishTime
         {
