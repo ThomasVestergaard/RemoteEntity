@@ -91,7 +91,7 @@ namespace RemoteEntity
             if (entityStorage.ContainsKey(entityId))
             {
                 var currentEntity = entityStorage.Get<EntityDto<T>>(entityId);
-                toReturn.updateValue(currentEntity.Value, currentEntity.PublishTime);
+                toReturn.updateValue(currentEntity.Value, currentEntity.PublishTime, currentEntity.Tags);
             } else 
             {
                 // Create initial seed entity if possible
@@ -102,7 +102,7 @@ namespace RemoteEntity
 
                     entityStorage.Add(entityId, new EntityDto<T>(entityId, seedEntity, DateTimeOffset.UtcNow, new List<IEntityTag>()));
                     logger.LogInformation($"Added initial seed entity for '{entityId}'");
-                    toReturn.updateValue(seedEntity, DateTimeOffset.UtcNow);
+                    toReturn.updateValue(seedEntity, DateTimeOffset.UtcNow, new List<EntityTagDto>());
                 }
             }
             
@@ -113,13 +113,17 @@ namespace RemoteEntity
                 var updateChannel = Channel.CreateUnbounded<EntityDto<T>>();
 
                 // Subscribe to changes
-                entityPublisher.Subscribe<T>(entityId, dto => { updateChannel.Writer.TryWrite(dto); });
+                entityPublisher.Subscribe<T>(entityId, dto =>
+                {
+                    updateChannel.Writer.TryWrite(dto);
+                });
 
                 var channelReaderTask = toReturn.Start(updateChannel, updateHandler);
                 observers.Add(toReturn);
                 channelReaderTasks.Add(channelReaderTask);
             }
 
+            
             return toReturn;
         }
 

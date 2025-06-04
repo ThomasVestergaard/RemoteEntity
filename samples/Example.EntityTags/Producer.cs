@@ -1,11 +1,13 @@
-﻿using RemoteEntity;
+﻿using Microsoft.Extensions.Hosting;
+using RemoteEntity;
 using RemoteEntity.Tags;
 
 namespace Example.GettingStarted;
 
-public class Producer(IEntityHive entityHive)
+public class Producer(IEntityHive entityHive) : IHostedService
 {
-    public void Execute()
+
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
         var obj = new SomeValueObject
         {
@@ -35,8 +37,10 @@ public class Producer(IEntityHive entityHive)
             Thread.Sleep(1000);
         }
 
-        Console.WriteLine($"PRODUCER: Deleting object");
-        entityHive.Delete<SomeValueObject>("ObjectIdentifier");
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken)
+    {
         
     }
 }

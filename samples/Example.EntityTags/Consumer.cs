@@ -1,28 +1,37 @@
-﻿using RemoteEntity;
+﻿using Microsoft.Extensions.Hosting;
+using RemoteEntity;
 
 namespace Example.GettingStarted;
 
-public class Consumer(IEntityHive entityHive)
+public class Consumer(IEntityHive entityHive) : IHostedService
 {
-    public void Execute()
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
-        entityHive.HiveOptions.PublishDuplicates = false;
         var observable = entityHive.SubscribeToEntity<SomeValueObject>("ObjectIdentifier", entity =>
         {
-            
             // Handle updates as the come
             Console.WriteLine($"CONSUMER: Update received. Value is: '{entity.SomeText}'");
         });
 
-        if (observable.Value != null)
+        observable.OnUpdate += dto =>
         {
-            Console.WriteLine($"Entity values when subscribed: '{observable.Value.SomeText}'");
+            Console.WriteLine($"CONSUMER: Update received. Tags are: ");
+            foreach (var tag in observable.Tags)
+            {
+                Console.WriteLine($"  '{tag.TagName}' ({tag.GetValueType()})='{tag.GetTagValue<object>()}'");
+            }
+        };
+
+        Console.WriteLine("Consumer. Here are the tags on the entity:");
+        foreach (var tag in observable.Tags)
+        {
+            Console.WriteLine($"  '{tag.TagName}' ({tag.GetValueType()})='{tag.GetTagValue<object>()}'");
         }
-        else
-        {
-            Console.WriteLine("Entity value when subscribed: null");
-        } 
         
-            
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken)
+    {
+        
     }
 }
