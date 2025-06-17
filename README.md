@@ -36,7 +36,7 @@ Extensionmethods are provided to easy handle configuration and dependency inject
 
 Install the nuget packages.
 ```csharp
-Install-Package TVestergaard.RemoteEntity.Redis -Version 0.5.0-beta
+Install-Package TVestergaard.RemoteEntity.Redis -Version 0.5.1-beta
 ```
 
 ## Define a class that should be shared across services
