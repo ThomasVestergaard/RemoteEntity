@@ -10,7 +10,7 @@ namespace RemoteEntity
         public string EntityId { get; set; } = null!;
         public T Value { get; set; } = default!;
 
-        public List<EntityTagDto> Tags { get; set; } = new();
+        public List<EntityTagDto> Tags { get; set; } = new List<EntityTagDto>();
         
         public EntityDto() { }
 
@@ -21,7 +21,7 @@ namespace RemoteEntity
             Value = entityValue;
             
             foreach (var tag in tags)
-                Tags.Add(EntityTagDto.FromEntityTag(tag));
+                Tags. Add(EntityTagDto.FromEntityTag(tag));
         }
     }
 }

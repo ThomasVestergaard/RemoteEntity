@@ -99,8 +99,7 @@ namespace RemoteEntity
                 if (hasInitialSeedEntity)
                 {
                     var seedEntity = ((IInitialSeed<T>)Activator.CreateInstance(typeof(T))!).InitialSeedEntity();
-
-                    entityStorage.Add(entityId, new EntityDto<T>(entityId, seedEntity, DateTimeOffset.UtcNow, new List<IEntityTag>()));
+                    entityStorage.Add(entityId, new EntityDto<T>(entityId, seedEntity, DateTimeOffset.UtcNow, ((IInitialSeed<T>)seedEntity).InitialSeedEntityTags()));
                     logger.LogInformation($"Added initial seed entity for '{entityId}'");
                     toReturn.updateValue(seedEntity, DateTimeOffset.UtcNow, new List<EntityTagDto>());
                 }

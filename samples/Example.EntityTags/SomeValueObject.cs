@@ -1,4 +1,6 @@
 ﻿using RemoteEntity;
+using RemoteEntity.Tags;
+
 namespace Example.GettingStarted;
 
 public class SomeValueObject : ICloneable<SomeValueObject>, IInitialSeed<SomeValueObject>
@@ -15,5 +17,10 @@ public class SomeValueObject : ICloneable<SomeValueObject>, IInitialSeed<SomeVal
             SomeNumber = -1,
             SomeText = "Default text value"
         };
+    }
+
+    public IEnumerable<IEntityTag> InitialSeedEntityTags()
+    {
+        return new List<IEntityTag>();
     }
 }

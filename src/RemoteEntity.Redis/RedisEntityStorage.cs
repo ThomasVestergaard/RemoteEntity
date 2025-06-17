@@ -58,6 +58,36 @@ namespace RemoteEntity.Redis
             return true;
         }
 
+        public bool SetEntityDto<T>(string key, IEntityDto<T> entityDto)
+        {
+            try
+            {
+                var serialized = JsonSerializer.Serialize(entityDto);
+                redisDb.GetDatabase().StringSet(getKeyName(key), serialized);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to set entity dto");
+                return false;
+            }
+
+            return true;
+        }
+
+        public IEntityDto<T> GetEntityDto<T>(string key)
+        {
+            try
+            {
+                var serialized = redisDb.GetDatabase().StringGet(getKeyName(key));
+                return JsonSerializer.Deserialize<EntityDto<T>>(serialized);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to get entity");
+                return default;
+            }
+        }
+
         public string GetRaw(string key)
         {
             try
