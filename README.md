@@ -1,3 +1,4 @@
+[![NuGet](https://img.shields.io/badge/license-MIT-brightgreen)](LICENSE)
 [![NuGet](https://img.shields.io/nuget/dt/TVestergaard.RemoteEntity.svg)](https://www.nuget.org/packages/TVestergaard.RemoteEntity)
 
 # What is this?

@@ -12,7 +12,7 @@
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.5" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
         <PackageReference Include="NRedisStack" Version="1.0.0" />
-        <PackageReference Include="TVestergaard.RemoteEntity.Redis" Version="0.5.0-beta" />
+        <PackageReference Include="TVestergaard.RemoteEntity.Redis" Version="0.5.1-beta" />
     </ItemGroup>
 
     <ItemGroup>
