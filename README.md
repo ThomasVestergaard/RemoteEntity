@@ -120,11 +120,11 @@ When stopping your application, make sure to call Stop() on the EntityHive insta
 ```
 
 # Tips, tricks and best practises
-## Avoid large entities
-Entities are meant to be small in nature. Keep them simple and do not publish liarge lists.
-This is partticular true if you use redis ans backend. Redis is single threaded and a large publish will block redis until done.
-
 Here are a few implementation tips and tricks based on real-life experience
+## Avoid large entities
+Entities are meant to be small in nature. Keep them simple and do not publish large lists.
+This is partticular true if you use redis ans backend. Redis is single threaded and a large publish will create bottlenecks.
+
 ## Put entity id's on the entity class
 To avoid having a entity id's hardcoded all over the place, make a helper method on each entity to generate an apropiate entity id. Often entity id's are dynamic and are generated based on different input variables. This logic should be centralized.
 ```csharp
