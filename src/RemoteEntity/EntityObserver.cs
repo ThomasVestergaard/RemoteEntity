@@ -34,7 +34,7 @@ namespace RemoteEntity
         
         private T value { get; set; } = default!;
 
-        public List<IEntityTag> Tags
+        public List<EntityTag> Tags
         {
             get
             {
@@ -45,7 +45,7 @@ namespace RemoteEntity
             }
         }
 
-        private List<IEntityTag> tags { get; set; } = new();
+        private List<EntityTag> tags { get; set; } = new();
 
         public DateTimeOffset PublishTime
         {
@@ -71,17 +71,14 @@ namespace RemoteEntity
             publishTime = DateTimeOffset.MinValue;
         }
 
-        internal void updateValue(T newValue, DateTimeOffset publishTime, IEnumerable<EntityTagDto> tags)
+        internal void updateValue(T newValue, DateTimeOffset publishTime, List<EntityTag> tags)
         {
             logger.LogTrace($"Update received for '{EntityId}'");
             lock (lockObject)
             {
                 value = newValue;
                 this.publishTime = publishTime;
-            
-                this.tags.Clear();
-                foreach (var tag in tags)
-                    this.tags.Add(tag.ToEntityTag());
+                this.tags = tags;
             }
             RaiseOnUpdateEvent(value);
         }

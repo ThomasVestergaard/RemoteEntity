@@ -7,7 +7,7 @@ public class Consumer(IEntityHive entityHive) : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var observable = entityHive.SubscribeToEntity<SomeValueObject>("ObjectIdentifier", entity =>
+        var observable = entityHive.SubscribeToEntity<SomeValueObject>("EntityId2", entity =>
         {
             // Handle updates as the come
             Console.WriteLine($"CONSUMER: Update received. Value is: '{entity.SomeText}'");
@@ -18,14 +18,14 @@ public class Consumer(IEntityHive entityHive) : IHostedService
             Console.WriteLine($"CONSUMER: Update received. Tags are: ");
             foreach (var tag in observable.Tags)
             {
-                Console.WriteLine($"  '{tag.TagName}' ({tag.GetValueType()})='{tag.GetTagValue<object>()}'");
+                Console.WriteLine($"  '{tag.TagName}' ='{tag.TagValue}'");
             }
         };
 
         Console.WriteLine("Consumer. Here are the tags on the entity:");
         foreach (var tag in observable.Tags)
         {
-            Console.WriteLine($"  '{tag.TagName}' ({tag.GetValueType()})='{tag.GetTagValue<object>()}'");
+            Console.WriteLine($"  '{tag.TagName}' ='{tag.TagValue}'");
         }
         
     }

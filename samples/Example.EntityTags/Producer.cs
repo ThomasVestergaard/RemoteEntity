@@ -15,9 +15,9 @@ public class Producer(IEntityHive entityHive) : IHostedService
             SomeText = "Update"
         };
 
-        var tags = new List<IEntityTag>();
-        tags.Add(EntityTag.Create("bool_tag", true));
-        tags.Add(EntityTag.Create("string_tag", "Here is some meta data for your entity"));
+        var tags = new List<EntityTag>();
+        tags.Add(new EntityTag("bool_tag", "true"));
+        tags.Add(new EntityTag("string_tag", "Here is some meta data for your entity"));
 
         for(int i=0; i<5; i++)
         {
@@ -27,7 +27,7 @@ public class Producer(IEntityHive entityHive) : IHostedService
 
             try
             {
-                entityHive.PublishEntity(obj, "ObjectIdentifier", tags);
+                entityHive.PublishEntity(obj, "EntityId2", tags);
             }
             catch (Exception e)
             {

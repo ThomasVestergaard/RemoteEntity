@@ -34,10 +34,10 @@ namespace RemoteEntity
   
         public void PublishEntity<T>(T entity, string entityId) where T : ICloneable<T>
         {
-            PublishEntity(entity, entityId, new List<IEntityTag>());
+            PublishEntity(entity, entityId, new List<EntityTag>());
         }
 
-        public void PublishEntity<T>(T entity, string entityId, IEnumerable<IEntityTag> tags) where T : ICloneable<T>
+        public void PublishEntity<T>(T entity, string entityId, List<EntityTag> tags) where T : ICloneable<T>
         {
             var dto = new EntityDto<T>(entityId, entity, DateTimeOffset.UtcNow, tags);
             var isDuplicate =  duplicateDetector.IsDuplicate(entity, entityId);
@@ -62,7 +62,7 @@ namespace RemoteEntity
             if (entityStorage.ContainsKey(entityId))
             {
                 var currentEntity = entityStorage.Get<EntityDto<T>>(entityId);
-                return currentEntity.Value;
+                return currentEntity.Value.Value;
             }
 
             return default!;
@@ -91,7 +91,7 @@ namespace RemoteEntity
             if (entityStorage.ContainsKey(entityId))
             {
                 var currentEntity = entityStorage.Get<EntityDto<T>>(entityId);
-                toReturn.updateValue(currentEntity.Value, currentEntity.PublishTime, currentEntity.Tags);
+                toReturn.updateValue(currentEntity.Value.Value, currentEntity.PublishTime, currentEntity.Tags);
             } else 
             {
                 // Create initial seed entity if possible
@@ -101,7 +101,7 @@ namespace RemoteEntity
                     var seedEntity = ((IInitialSeed<T>)Activator.CreateInstance(typeof(T))!).InitialSeedEntity();
                     entityStorage.Add(entityId, new EntityDto<T>(entityId, seedEntity, DateTimeOffset.UtcNow, ((IInitialSeed<T>)seedEntity).InitialSeedEntityTags()));
                     logger.LogInformation($"Added initial seed entity for '{entityId}'");
-                    toReturn.updateValue(seedEntity, DateTimeOffset.UtcNow, new List<EntityTagDto>());
+                    toReturn.updateValue(seedEntity, DateTimeOffset.UtcNow, new List<EntityTag>());
                 }
             }
             

@@ -40,29 +40,13 @@ namespace RemoteEntity.Redis
             return false;
         }
 
-        public bool Add<T>(string key, T entity) => Set(key, entity);
+        public bool Add<T>(string key, EntityDto<T> entity) => Set(key, entity);
 
-        public bool Set<T>(string key, T entity)
+        public bool Set<T>(string key, EntityDto<T> entity)
         {
             try
             {
                 var serialized = JsonSerializer.Serialize(entity);
-                redisDb.GetDatabase().StringSet(getKeyName(key), serialized);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Failed to set entity");
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool SetEntityDto<T>(string key, IEntityDto<T> entityDto)
-        {
-            try
-            {
-                var serialized = JsonSerializer.Serialize(entityDto);
                 redisDb.GetDatabase().StringSet(getKeyName(key), serialized);
             }
             catch (Exception ex)
@@ -74,11 +58,13 @@ namespace RemoteEntity.Redis
             return true;
         }
 
-        public IEntityDto<T> GetEntityDto<T>(string key)
+        public EntityDto<T> Get<T>(string key)
         {
             try
             {
                 var serialized = redisDb.GetDatabase().StringGet(getKeyName(key));
+                var stringed = serialized.ToString();
+                var test = JsonSerializer.Deserialize<EntityDto<T>>(stringed);
                 return JsonSerializer.Deserialize<EntityDto<T>>(serialized);
             }
             catch (Exception ex)
@@ -100,21 +86,7 @@ namespace RemoteEntity.Redis
                 return String.Empty;
             }
         }
-        
-        public T Get<T>(string key)
-        {
-            try
-            {
-                var serialized = redisDb.GetDatabase().StringGet(getKeyName(key));
-                return JsonSerializer.Deserialize<T>(serialized);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Failed to get entity");
-                return default(T);
-            }
-        }
-
+       
         public List<string> GetKeys(int maxKeys = 1000)
         {
             try

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using RemoteEntity.Redis;
-using StackExchange.Redis;
+using RemoteEntity.Tags;
 
 namespace RemoteEntity.Tests;
 
@@ -40,11 +41,11 @@ public class EntityStorageTests
     {
         var key = CreateEntityKey();
         var entity = new Entity { Value = "SomeValue" };
-        
-        RedisEntityStorage.Add(key, entity);
+        var entityDto = new EntityDto<Entity>(key, entity, DateTimeOffset.Now, new List<EntityTag>());
+        RedisEntityStorage.Add(key, entityDto);
         var fetchedEntity = RedisEntityStorage.Get<Entity>(key);
         
-        Assert.That("SomeValue", Is.EqualTo(fetchedEntity.Value));
+        Assert.That("SomeValue", Is.EqualTo(fetchedEntity.Value.Value));
     }
     
     [Test]
@@ -53,7 +54,8 @@ public class EntityStorageTests
         var key = CreateEntityKey();
         
         var entity = new Entity { Value = "SomeValue" };
-        RedisEntityStorage.Add(key, entity);
+        var entityDto = new EntityDto<Entity>(key, entity, DateTimeOffset.Now, new List<EntityTag>());
+        RedisEntityStorage.Add(key, entityDto);
             
         RedisEntityStorage.Delete(key);
         var containsKey = RedisEntityStorage.ContainsKey(key);
@@ -65,7 +67,8 @@ public class EntityStorageTests
     {
         var key = CreateEntityKey();
         var entity = new Entity { Value = "SomeValue" };
-        RedisEntityStorage.Add(key, entity);
+        var entityDto = new EntityDto<Entity>(key, entity, DateTimeOffset.Now, new List<EntityTag>());
+        RedisEntityStorage.Add(key, entityDto);
             
         RedisEntityStorage.Delete(key);
         var containsKey = RedisEntityStorage.ContainsKey(key);

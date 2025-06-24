@@ -9,6 +9,6 @@ namespace RemoteEntity
         DateTimeOffset PublishTime { get; set; }
         string EntityId { get; set; }
         T Value { get; set; }
-        List<EntityTagDto> Tags { get; set; }
+        List<EntityTag> Tags { get; set; }
     }
 }

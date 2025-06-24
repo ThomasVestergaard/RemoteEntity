@@ -6,5 +6,5 @@ namespace RemoteEntity;
 public interface IInitialSeed<T>
 {
     T InitialSeedEntity();
-    IEnumerable<IEntityTag> InitialSeedEntityTags();
+    List<EntityTag> InitialSeedEntityTags();
 }

@@ -19,8 +19,10 @@ public class SomeValueObject : ICloneable<SomeValueObject>, IInitialSeed<SomeVal
         };
     }
 
-    public IEnumerable<IEntityTag> InitialSeedEntityTags()
+    public List<EntityTag> InitialSeedEntityTags()
     {
-        return new List<IEntityTag>();
+        var tags = new List<EntityTag>();
+        tags.Add(new EntityTag("tag_name", "default tag value"));
+        return tags;
     }
 }
