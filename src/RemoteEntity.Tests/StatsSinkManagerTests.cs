@@ -38,8 +38,8 @@ public class StatsSinkManagerTests
         manager.Start();
         manager.RegisterPublish("some-id", "some-entity-type", 1000);
         
-        sink1.Verify(s => s.ProcessStats(It.Is<IEnumerable<StatEntry>>(stats => stats.Count() == 3)), Times.Once);
-        sink2.Verify(s => s.ProcessStats(It.Is<IEnumerable<StatEntry>>(stats => stats.Count() == 3)), Times.Once);
+        sink1.Verify(s => s.ProcessStats(It.Is<IEnumerable<StatEntry>>(stats => stats.Count() == 4)), Times.Once);
+        sink2.Verify(s => s.ProcessStats(It.Is<IEnumerable<StatEntry>>(stats => stats.Count() == 4)), Times.Once);
     }
     
 

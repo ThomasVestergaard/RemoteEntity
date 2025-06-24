@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using RemoteEntity.Tags;
 
 namespace RemoteEntity
 {
@@ -32,6 +34,19 @@ namespace RemoteEntity
         
         private T value { get; set; } = default!;
 
+        public List<EntityTag> Tags
+        {
+            get
+            {
+                lock (lockObject)
+                {
+                    return tags;
+                }
+            }
+        }
+
+        private List<EntityTag> tags { get; set; } = new();
+
         public DateTimeOffset PublishTime
         {
             get
@@ -56,13 +71,14 @@ namespace RemoteEntity
             publishTime = DateTimeOffset.MinValue;
         }
 
-        internal void updateValue(T newValue, DateTimeOffset publishTime)
+        internal void updateValue(T newValue, DateTimeOffset publishTime, List<EntityTag> tags)
         {
             logger.LogTrace($"Update received for '{EntityId}'");
             lock (lockObject)
             {
                 value = newValue;
                 this.publishTime = publishTime;
+                this.tags = tags;
             }
             RaiseOnUpdateEvent(value);
         }
@@ -87,11 +103,11 @@ namespace RemoteEntity
 
                         if (message.Value != null)
                         {
-                            updateValue(message.Value, message.PublishTime);
+                            updateValue(message.Value, message.PublishTime, message.Tags);
                         }
                         else
                         {
-                            updateValue(default!, DateTimeOffset.MinValue);
+                            updateValue(default!, DateTimeOffset.MinValue, message.Tags);
                         }
 
                         if (this.updateObserver != null)
