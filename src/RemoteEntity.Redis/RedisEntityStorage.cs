@@ -64,8 +64,7 @@ namespace RemoteEntity.Redis
             {
                 var serialized = redisDb.GetDatabase().StringGet(getKeyName(key));
                 var stringed = serialized.ToString();
-                var test = JsonSerializer.Deserialize<EntityDto<T>>(stringed);
-                return JsonSerializer.Deserialize<EntityDto<T>>(serialized);
+                return JsonSerializer.Deserialize<EntityDto<T>>(stringed);
             }
             catch (Exception ex)
             {
